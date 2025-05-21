@@ -132,30 +132,26 @@
   )
 )
 
-;; Revoke a credential
+;; Revoke a credential - Using asserts and direct map-get? access
 (define-public (revoke-credential (credential-id (buff 32)))
-  (let ((caller tx-sender))
-    (match (map-get? credentials { credential-id: credential-id })
-      credential 
-        (begin
-          ;; Only the credential-operations contract or the issuer can revoke
-          ;; In a full implementation, we would check caller is authorized
-          ;; For this simplified version, we'll just check if caller is the issuer
-          (asserts! (is-eq (get issuer credential) caller) err-unauthorized)
-          
-          ;; Update credential status
-          (map-set credentials
-            { credential-id: credential-id }
-            (merge credential { 
-              revoked: true,
-              revoked-at: (some block-height)
-            })
-          )
-          
-          ;; Call event module or other contracts would happen here
-          (ok true)
-        )
-      (err err-not-found)
+  (begin
+    ;; Check if credential exists
+    (asserts! (is-some (map-get? credentials { credential-id: credential-id })) err-not-found)
+    
+    ;; Get credential data and verify issuer
+    (let ((credential (unwrap-panic (map-get? credentials { credential-id: credential-id }))))
+      (asserts! (is-eq (get issuer credential) tx-sender) err-unauthorized)
+      
+      ;; Update credential
+      (map-set credentials
+        { credential-id: credential-id }
+        (merge credential {
+          revoked: true,
+          revoked-at: (some block-height)
+        })
+      )
+      
+      (ok true)
     )
   )
 )
