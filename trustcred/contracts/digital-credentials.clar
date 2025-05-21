@@ -1,6 +1,7 @@
 ;; TrustCred: Core Module (digital-credentials.clar)
-;; This is the core contract that defines the credential data structures
-;; Version 0.2.0
+;; This is the core contract that handles the primary data structures and functionality
+;; for the TrustCred digital credentials system.
+;; Version 1.0.0
 
 ;; Define constants
 (define-constant contract-owner tx-sender)
@@ -9,6 +10,8 @@
 (define-constant err-unauthorized (err u102))
 (define-constant err-already-exists (err u103))
 (define-constant err-expired (err u104))
+(define-constant err-revoked (err u105))
+(define-constant err-invalid-input (err u106))
 
 ;; Define data structures
 
@@ -21,6 +24,8 @@
     schema-id: (buff 32),
     issued-at: uint,
     expires-at: (optional uint),
+    revoked: bool,
+    revoked-at: (optional uint),
     data-hash: (buff 32),
     metadata-uri: (string-utf8 256)
   }
@@ -51,13 +56,17 @@
   (map-get? credential-schemas { schema-id: schema-id })
 )
 
-;; Check if a credential is valid (not expired)
+;; Check if a credential is valid (not expired and not revoked)
 (define-read-only (is-credential-valid (credential-id (buff 32)))
   (match (map-get? credentials { credential-id: credential-id })
-    credential (match (get expires-at credential)
-                 expiry (< block-height expiry)  ;; Not expired
-                 true)                           ;; No expiry date means always valid
-    false  ;; Credential not found
+    credential (and 
+                 (not (get revoked credential))
+                 (match (get expires-at credential)
+                   expiry (< block-height expiry)
+                   true
+                 )
+               )
+    false
   )
 )
 
@@ -112,6 +121,8 @@
         schema-id: schema-id,
         issued-at: block-height,
         expires-at: expires-at,
+        revoked: false,
+        revoked-at: none,
         data-hash: data-hash,
         metadata-uri: metadata-uri
       }
@@ -121,12 +132,72 @@
   )
 )
 
-;; Helper function to verify if a credential exists
+;; Revoke a credential
+(define-public (revoke-credential (credential-id (buff 32)))
+  (let ((caller tx-sender))
+    (match (map-get? credentials { credential-id: credential-id })
+      credential 
+        (begin
+          ;; Only the credential-operations contract or the issuer can revoke
+          ;; In a full implementation, we would check caller is authorized
+          ;; For this simplified version, we'll just check if caller is the issuer
+          (asserts! (is-eq (get issuer credential) caller) err-unauthorized)
+          
+          ;; Update credential status
+          (map-set credentials
+            { credential-id: credential-id }
+            (merge credential { 
+              revoked: true,
+              revoked-at: (some block-height)
+            })
+          )
+          
+          ;; Call event module or other contracts would happen here
+          (ok true)
+        )
+      (err err-not-found)
+    )
+  )
+)
+
+;; Check if credential is revoked
+(define-read-only (is-credential-revoked (credential-id (buff 32)))
+  (match (map-get? credentials { credential-id: credential-id })
+    credential (get revoked credential)
+    false  ;; Credential not found, consider not revoked
+  )
+)
+
+;; Get credential verification details
+(define-read-only (get-verification-details (credential-id (buff 32)))
+  (match (map-get? credentials { credential-id: credential-id })
+    credential
+      (ok {
+        issuer: (get issuer credential),
+        schema-id: (get schema-id credential), 
+        issued-at: (get issued-at credential),
+        expires-at: (get expires-at credential),
+        revoked: (get revoked credential),
+        revoked-at: (get revoked-at credential),
+        valid: (and 
+                (not (get revoked credential))
+                (match (get expires-at credential)
+                  expiry (< block-height expiry)
+                  true)
+               )
+      })
+    (err err-not-found)
+  )
+)
+
+;; Helper functions
+
+;; Verify if a credential exists
 (define-read-only (credential-exists (credential-id (buff 32)))
   (is-some (map-get? credentials { credential-id: credential-id }))
 )
 
-;; Helper function to verify if a schema exists
+;; Verify if a schema exists
 (define-read-only (schema-exists (schema-id (buff 32)))
   (is-some (map-get? credential-schemas { schema-id: schema-id }))
 )
