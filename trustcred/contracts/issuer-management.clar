@@ -1,4 +1,4 @@
-;; TrustCred: Issuer Management (issuer-management.clar)
+;; Issuer Management (issuer-management.clar)
 ;; This contract manages the authorized issuers and their permissions within
 ;; the TrustCred ecosystem.
 
