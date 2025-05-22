@@ -1,7 +1,6 @@
-;; TrustCred: Core Module (digital-credentials.clar)
+;; Core Module (digital-credentials.clar)
 ;; This is the core contract that handles the primary data structures and functionality
 ;; for the TrustCred digital credentials system.
-;; Version 1.0.0
 
 ;; Define constants
 (define-constant contract-owner tx-sender)

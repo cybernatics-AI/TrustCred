@@ -1,6 +1,5 @@
 ;; TrustCred: Credential Operations (credential-operations.clar)
 ;; This contract handles all operations related to credentials including
-;; issuance, revocation, transfers, and updates.
 
 ;; Error codes
 (define-constant err-unauthorized (err u102))
