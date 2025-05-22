@@ -1,5 +1,6 @@
-;; TrustCred: Enhanced Issuer Management (issuer-management.clar)
-;; Version 2 - Added admin system, issuer categories, and detailed information
+;; TrustCred: Issuer Management (issuer-management.clar)
+;; This contract manages the authorized issuers and their permissions within
+;; the TrustCred ecosystem.
 
 ;; Define constants
 (define-constant contract-owner tx-sender)
@@ -10,7 +11,7 @@
 
 ;; Define data structures
 
-;; Enhanced issuer structure
+;; Issuer structure
 (define-map authorized-issuers
   { address: principal }
   {
@@ -19,17 +20,18 @@
     website: (string-utf8 128),
     authorized-at: uint,
     authorized-by: principal,
-    status: (string-utf8 16) ;; "active", "suspended", "revoked"
+    status: (string-utf8 16), ;; "active", "suspended", "revoked"
+    metadata-uri: (string-utf8 256)
   }
 )
 
-;; Issuer categories
+;; Issuer categories (e.g., educational, professional, government)
 (define-map issuer-categories
   { issuer: principal }
-  { categories: (list 5 (string-utf8 32)) }
+  { categories: (list 10 (string-utf8 32)) }
 )
 
-;; Admin system
+;; Admin list
 (define-map admins
   { address: principal }
   { added-at: uint, added-by: principal }
@@ -42,7 +44,8 @@
                           (name (string-utf8 64)) 
                           (description (string-utf8 256))
                           (website (string-utf8 128))
-                          (categories (list 5 (string-utf8 32))))
+                          (metadata-uri (string-utf8 256))
+                          (categories (list 10 (string-utf8 32))))
   (let ((caller tx-sender))
     ;; Ensure caller is owner or admin
     (asserts! (or (is-eq caller contract-owner) (is-admin caller)) err-unauthorized)
@@ -59,7 +62,8 @@
         website: website,
         authorized-at: block-height,
         authorized-by: caller,
-        status: "active"
+        status: "active",
+        metadata-uri: metadata-uri
       }
     )
     
@@ -69,7 +73,7 @@
       { categories: categories }
     )
     
-    ;; Log the event
+    ;; Log the issuer addition event
     (print { event: "issuer-added", issuer: issuer, added-by: caller })
     
     (ok true)
@@ -92,7 +96,7 @@
              { status: "revoked" })
     )
     
-    ;; Log the event
+    ;; Log the issuer removal event
     (print { event: "issuer-removed", issuer: issuer, removed-by: caller })
     
     (ok true)
@@ -115,7 +119,7 @@
              { status: "suspended" })
     )
     
-    ;; Log the event
+    ;; Log the issuer suspension event
     (print { event: "issuer-suspended", issuer: issuer, suspended-by: caller })
     
     (ok true)
@@ -133,7 +137,7 @@
     
     ;; Get current issuer data
     (let ((issuer-data (unwrap-panic (map-get? authorized-issuers { address: issuer }))))
-      ;; Ensure issuer is suspended
+      ;; Ensure issuer is suspended (not revoked)
       (asserts! (is-eq (get status issuer-data) "suspended") err-unauthorized)
       
       ;; Update issuer status to "active"
@@ -142,11 +146,68 @@
         (merge issuer-data { status: "active" })
       )
       
-      ;; Log the event
+      ;; Log the issuer reactivation event
       (print { event: "issuer-reactivated", issuer: issuer, reactivated-by: caller })
       
       (ok true)
     )
+  )
+)
+
+;; Update issuer information (only the issuer can update their own info)
+(define-public (update-issuer-info (name (string-utf8 64)) 
+                                  (description (string-utf8 256))
+                                  (website (string-utf8 128))
+                                  (metadata-uri (string-utf8 256)))
+  (let ((caller tx-sender))
+    ;; Ensure issuer exists
+    (asserts! (is-some (map-get? authorized-issuers { address: caller })) err-not-found)
+    
+    ;; Get current issuer data
+    (let ((issuer-data (unwrap-panic (map-get? authorized-issuers { address: caller }))))
+      ;; Ensure issuer is active
+      (asserts! (is-eq (get status issuer-data) "active") err-unauthorized)
+      
+      ;; Update issuer information
+      (map-set authorized-issuers
+        { address: caller }
+        (merge issuer-data 
+          {
+            name: name,
+            description: description,
+            website: website,
+            metadata-uri: metadata-uri
+          }
+        )
+      )
+      
+      ;; Log the issuer update event
+      (print { event: "issuer-updated", issuer: caller })
+      
+      (ok true)
+    )
+  )
+)
+
+;; Update issuer categories
+(define-public (update-issuer-categories (issuer principal) (categories (list 10 (string-utf8 32))))
+  (let ((caller tx-sender))
+    ;; Ensure caller is owner or admin
+    (asserts! (or (is-eq caller contract-owner) (is-admin caller)) err-unauthorized)
+    
+    ;; Ensure issuer exists
+    (asserts! (is-some (map-get? authorized-issuers { address: issuer })) err-not-found)
+    
+    ;; Update categories
+    (map-set issuer-categories
+      { issuer: issuer }
+      { categories: categories }
+    )
+    
+    ;; Log the categories update event
+    (print { event: "issuer-categories-updated", issuer: issuer, updated-by: caller })
+    
+    (ok true)
   )
 )
 
@@ -165,8 +226,8 @@
       { added-at: block-height, added-by: tx-sender }
     )
     
-    ;; Log the event
-    (print { event: "admin-added", admin: admin })
+    ;; Log the admin addition event
+    (print { event: "admin-added", admin: admin, added-by: tx-sender })
     
     (ok true)
   )
@@ -184,8 +245,8 @@
     ;; Remove the admin
     (map-delete admins { address: admin })
     
-    ;; Log the event
-    (print { event: "admin-removed", admin: admin })
+    ;; Log the admin removal event
+    (print { event: "admin-removed", admin: admin, removed-by: tx-sender })
     
     (ok true)
   )
@@ -219,7 +280,7 @@
   (is-some (map-get? admins { address: address }))
 )
 
-;; Initialize contract (owner only)
+;; Initialize contract
 (define-public (initialize)
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
