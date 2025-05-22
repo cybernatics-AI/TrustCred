@@ -1,12 +1,12 @@
 ;; Utilities (utilities.clar)
-;; Enhanced utility functions with list management for the TrustCred system
+;; Complete utility functions with advanced list management for the TrustCred system
 
 ;; Define constants
 (define-constant contract-owner tx-sender)
 (define-constant err-owner-only (err u100))
 (define-constant err-unauthorized (err u102))
 
-;; Buffer manipulation utilities
+;; Buff manipulation utilities
 (define-read-only (uint-to-buff (value uint))
   (unwrap-panic (to-consensus-buff? value))
 )
@@ -19,12 +19,26 @@
 )
 
 ;; List management utilities
-(define-read-only (contains-buff (haystack (list 50 (buff 32))) (needle (buff 32)))
+(define-read-only (contains-buff (haystack (list 100 (buff 32))) (needle (buff 32)))
   (is-some (index-of haystack needle))
 )
 
-(define-read-only (contains-uint (haystack (list 50 uint)) (needle uint))
+(define-read-only (remove-buff (haystack (list 100 (buff 32))) (needle (buff 32)))
+  (filter remove-predicate haystack)
+  (where (remove-predicate (item (buff 32)))
+    (not (is-eq item needle))
+  )
+)
+
+(define-read-only (contains-uint (haystack (list 100 uint)) (needle uint))
   (is-some (index-of haystack needle))
+)
+
+(define-read-only (remove-uint (haystack (list 100 uint)) (needle uint))
+  (filter remove-predicate haystack)
+  (where (remove-predicate (item uint))
+    (not (is-eq item needle))
+  )
 )
 
 ;; String utilities
@@ -32,7 +46,7 @@
   (is-eq value "")
 )
 
-;; Enhanced hash utilities
+;; Hash utilities
 (define-read-only (generate-credential-id (issuer principal) (recipient principal) (timestamp uint) (nonce uint))
   (sha256 (concat (concat (concat 
     (unwrap-panic (to-consensus-buff? issuer))
@@ -68,8 +82,8 @@
   )
 )
 
-;; TrustCred: Event Module (event-module.clar) - Stage 2
-;; Enhanced event logging with subject tracking and authorization
+;; TrustCred: Event Module (event-module.clar) - Stage 3
+;; Complete event logging system with comprehensive indexing and error handling
 
 ;; Define constants
 (define-constant contract-owner tx-sender)
@@ -95,7 +109,13 @@
 ;; Index of events by subject
 (define-map subject-events
   { subject-id: (buff 32) }
-  { event-ids: (list 50 uint) }
+  { event-ids: (list 100 uint) }
+)
+
+;; Index of events by actor
+(define-map actor-events
+  { actor: principal }
+  { event-ids: (list 100 uint) }
 )
 
 ;; Public functions
@@ -105,8 +125,8 @@
   (let ((caller tx-sender)
         (event-id (+ (var-get event-counter) u1)))
     
-    ;; Basic authorization check
-    (asserts! (is-authorized-caller caller) err-unauthorized)
+    ;; Ensure caller is from an authorized contract
+    (asserts! (is-authorized-contract caller) err-unauthorized)
     
     ;; Increment event counter
     (var-set event-counter event-id)
@@ -131,8 +151,8 @@
           { subject-id: subject-id }
           { event-ids: (unwrap! (as-max-len? 
                                   (append (get event-ids existing-data) event-id)
-                                  u50)
-                               (err u108)) }
+                                  u100)
+                               (log-event-overflow event-type subject-id target)) }
         )
       (map-set subject-events
         { subject-id: subject-id }
@@ -140,7 +160,33 @@
       )
     )
     
+    ;; Add to actor index
+    (match (map-get? actor-events { actor: caller })
+      existing-data 
+        (map-set actor-events
+          { actor: caller }
+          { event-ids: (unwrap! (as-max-len? 
+                                  (append (get event-ids existing-data) event-id)
+                                  u100)
+                               (log-event-overflow event-type subject-id target)) }
+        )
+      (map-set actor-events
+        { actor: caller }
+        { event-ids: (list event-id) }
+      )
+    )
+    
     (ok event-id)
+  )
+)
+
+;; Fallback function when event list exceeds max length
+(define-private (log-event-overflow (event-type (string-utf8 32)) 
+                                   (subject-id (buff 32))
+                                   (target (optional principal)))
+  (begin
+    (print { error: "event-list-overflow", event-type: event-type, subject-id: subject-id })
+    (err u108)
   )
 )
 
@@ -156,15 +202,27 @@
   )
 )
 
+(define-read-only (get-actor-events (actor principal))
+  (match (map-get? actor-events { actor: actor })
+    data (ok (get event-ids data))
+    (ok (list))
+  )
+)
+
 (define-read-only (get-event-count)
   (var-get event-counter)
 )
 
-;; Basic authorization function
-(define-read-only (is-authorized-caller (caller principal))
+;; Helper function to check if caller is an authorized contract
+(define-read-only (is-authorized-contract (contract principal))
   (or
-    (is-eq caller contract-owner)
-    (is-contract caller)
+    (is-eq contract (as-contract tx-sender))
+    (is-eq contract (as-contract .digital-credentials))
+    (is-eq contract (as-contract .credential-operations))
+    (is-eq contract (as-contract .issuer-management))
+    (is-eq contract .digital-credentials)
+    (is-eq contract .credential-operations)
+    (is-eq contract .issuer-management)
   )
 )
 
