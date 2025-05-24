@@ -28,8 +28,8 @@
     ;; Check if credential ID is unique
     (asserts! (is-none (contract-call? .digital-credentials get-credential credential-id)) err-already-exists)
     
-    ;; Issue the credential
-    (try! (contract-call? .digital-credentials-internal create-credential 
+    ;; Issue the credential directly using the main contract
+    (try! (contract-call? .digital-credentials store-credential
                           credential-id
                           issuer
                           recipient
@@ -37,12 +37,6 @@
                           data-hash
                           metadata-uri
                           expires-at))
-    
-    ;; Add credential to recipient's list
-    (try! (contract-call? .digital-credentials-internal add-recipient-credential recipient credential-id))
-    
-    ;; Add credential to issuer's list
-    (try! (contract-call? .digital-credentials-internal add-issuer-credential issuer credential-id))
     
     ;; Log the issuance event
     (try! (contract-call? .event-module log-event u"credential-issued" 
@@ -66,8 +60,8 @@
           ;; Check if credential is not already revoked
           (asserts! (not (get revoked credential)) err-already-exists)
           
-          ;; Revoke the credential
-          (try! (contract-call? .digital-credentials-internal revoke-credential credential-id))
+          ;; Revoke the credential directly
+          (try! (contract-call? .digital-credentials revoke-credential credential-id))
           
           ;; Log the revocation event
           (try! (contract-call? .event-module log-event u"credential-revoked" 
@@ -84,7 +78,7 @@
   )
 )
 
-;; Transfer a credential to a new recipient
+;; Transfer a credential to a new recipient - Simplified version
 (define-public (transfer-credential (credential-id (buff 32)) (new-recipient principal))
   (let ((current-owner tx-sender))
     ;; Get the credential
@@ -105,20 +99,15 @@
           ;; Check schema to see if transfer is allowed
           (try! (is-transfer-allowed credential-id))
           
-          ;; Remove credential from current recipient's list
-          (try! (contract-call? .digital-credentials-internal remove-recipient-credential 
-                                current-owner 
-                                credential-id))
-          
-          ;; Add credential to new recipient's list
-          (try! (contract-call? .digital-credentials-internal add-recipient-credential 
-                                new-recipient 
-                                credential-id))
-          
-          ;; Update the credential recipient
-          (try! (contract-call? .digital-credentials-internal update-credential-recipient 
-                                credential-id 
-                                new-recipient))
+          ;; Create a new credential with updated recipient (simplified approach)
+          (try! (contract-call? .digital-credentials store-credential
+                                credential-id
+                                (get issuer credential)
+                                new-recipient
+                                (get schema-id credential)
+                                (get data-hash credential)
+                                (get metadata-uri credential)
+                                (get expires-at credential)))
           
           ;; Log the transfer event
           (try! (contract-call? .event-module log-event u"credential-transferred" 
@@ -144,10 +133,15 @@
           ;; Check if caller is the issuer
           (asserts! (is-eq caller (get issuer credential)) err-unauthorized)
           
-          ;; Update the metadata
-          (try! (contract-call? .digital-credentials-internal update-credential-metadata 
-                                credential-id 
-                                new-metadata-uri))
+          ;; Update the metadata by creating a new credential entry
+          (try! (contract-call? .digital-credentials store-credential
+                                credential-id
+                                (get issuer credential)
+                                (get recipient credential)
+                                (get schema-id credential)
+                                (get data-hash credential)
+                                new-metadata-uri
+                                (get expires-at credential)))
           
           ;; Log the metadata update event
           (try! (contract-call? .event-module log-event u"credential-metadata-updated" 
