@@ -215,21 +215,6 @@
   )
 )
 
-;; Fallback function when event list exceeds max length
-(define-private (log-event-overflow (event-type (string-utf8 32)) 
-                                   (subject-id (buff 32))
-                                   (target (optional principal)))
-  (begin
-    (print { 
-      error: "event-list-overflow", 
-      event-type: event-type, 
-      subject-id: subject-id,
-      timestamp: block-height
-    })
-    err-event-overflow
-  )
-)
-
 ;; Read-only functions
 
 ;; Get an event by ID
@@ -292,12 +277,10 @@
 (define-read-only (is-authorized-contract (contract principal))
   (or
     (is-eq contract (as-contract tx-sender))
-    (is-eq contract (as-contract .digital-credentials))
-    (is-eq contract (as-contract .credential-operations))
-    (is-eq contract (as-contract .issuer-management))
     (is-eq contract .digital-credentials)
     (is-eq contract .credential-operations)
     (is-eq contract .issuer-management)
+    (is-eq contract .digital-credentials-internal)
   )
 )
 
@@ -328,12 +311,14 @@
     (var-set max-events-per-actor u100)
     
     ;; Register default event types
-    (map-set valid-event-types { event-type: u"CREDENTIAL_ISSUED" } { active: true })
-    (map-set valid-event-types { event-type: u"CREDENTIAL_VERIFIED" } { active: true })
-    (map-set valid-event-types { event-type: u"CREDENTIAL_REVOKED" } { active: true })
-    (map-set valid-event-types { event-type: u"ISSUER_REGISTERED" } { active: true })
-    (map-set valid-event-types { event-type: u"ISSUER_UPDATED" } { active: true })
-    (map-set valid-event-types { event-type: u"ISSUER_SUSPENDED" } { active: true })
+    (map-set valid-event-types { event-type: u"credential-issued" } { active: true })
+    (map-set valid-event-types { event-type: u"credential-verified" } { active: true })
+    (map-set valid-event-types { event-type: u"credential-revoked" } { active: true })
+    (map-set valid-event-types { event-type: u"credential-transferred" } { active: true })
+    (map-set valid-event-types { event-type: u"credential-metadata-updated" } { active: true })
+    (map-set valid-event-types { event-type: u"issuer-registered" } { active: true })
+    (map-set valid-event-types { event-type: u"issuer-updated" } { active: true })
+    (map-set valid-event-types { event-type: u"issuer-suspended" } { active: true })
     
     (ok true)
   )

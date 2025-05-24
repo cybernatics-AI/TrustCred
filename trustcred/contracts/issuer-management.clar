@@ -11,7 +11,7 @@
 
 ;; Define data structures
 
-;; Issuer structure
+;; Issuer structure - Fixed string-utf8 instead of string-ascii
 (define-map authorized-issuers
   { address: principal }
   {
@@ -62,7 +62,7 @@
         website: website,
         authorized-at: block-height,
         authorized-by: caller,
-        status: "active",
+        status: u"active",
         metadata-uri: metadata-uri
       }
     )
@@ -93,7 +93,7 @@
     (map-set authorized-issuers
       { address: issuer }
       (merge (unwrap-panic (map-get? authorized-issuers { address: issuer }))
-             { status: "revoked" })
+             { status: u"revoked" })
     )
     
     ;; Log the issuer removal event
@@ -116,7 +116,7 @@
     (map-set authorized-issuers
       { address: issuer }
       (merge (unwrap-panic (map-get? authorized-issuers { address: issuer }))
-             { status: "suspended" })
+             { status: u"suspended" })
     )
     
     ;; Log the issuer suspension event
@@ -138,12 +138,12 @@
     ;; Get current issuer data
     (let ((issuer-data (unwrap-panic (map-get? authorized-issuers { address: issuer }))))
       ;; Ensure issuer is suspended (not revoked)
-      (asserts! (is-eq (get status issuer-data) "suspended") err-unauthorized)
+      (asserts! (is-eq (get status issuer-data) u"suspended") err-unauthorized)
       
       ;; Update issuer status to "active"
       (map-set authorized-issuers
         { address: issuer }
-        (merge issuer-data { status: "active" })
+        (merge issuer-data { status: u"active" })
       )
       
       ;; Log the issuer reactivation event
@@ -166,7 +166,7 @@
     ;; Get current issuer data
     (let ((issuer-data (unwrap-panic (map-get? authorized-issuers { address: caller }))))
       ;; Ensure issuer is active
-      (asserts! (is-eq (get status issuer-data) "active") err-unauthorized)
+      (asserts! (is-eq (get status issuer-data) u"active") err-unauthorized)
       
       ;; Update issuer information
       (map-set authorized-issuers
@@ -257,7 +257,7 @@
 ;; Check if an address is an authorized issuer
 (define-read-only (is-authorized-issuer (address principal))
   (match (map-get? authorized-issuers { address: address })
-    issuer-data (is-eq (get status issuer-data) "active")
+    issuer-data (is-eq (get status issuer-data) u"active")
     false
   )
 )

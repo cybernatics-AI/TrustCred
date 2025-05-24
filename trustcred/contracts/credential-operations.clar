@@ -45,10 +45,9 @@
     (try! (contract-call? .digital-credentials-internal add-issuer-credential issuer credential-id))
     
     ;; Log the issuance event
-    (try! (contract-call? .event-module log-event "credential-issued" 
+    (try! (contract-call? .event-module log-event u"credential-issued" 
                           credential-id 
-                          issuer 
-                          recipient))
+                          (some recipient)))
     
     (ok credential-id)
   )
@@ -71,9 +70,8 @@
           (try! (contract-call? .digital-credentials-internal revoke-credential credential-id))
           
           ;; Log the revocation event
-          (try! (contract-call? .event-module log-event "credential-revoked" 
+          (try! (contract-call? .event-module log-event u"credential-revoked" 
                                 credential-id 
-                                caller 
                                 none))
           
           ;; Include reason in the event log
@@ -123,10 +121,9 @@
                                 new-recipient))
           
           ;; Log the transfer event
-          (try! (contract-call? .event-module log-event "credential-transferred" 
+          (try! (contract-call? .event-module log-event u"credential-transferred" 
                                 credential-id 
-                                current-owner 
-                                new-recipient))
+                                (some new-recipient)))
           
           (ok true)
         )
@@ -153,9 +150,8 @@
                                 new-metadata-uri))
           
           ;; Log the metadata update event
-          (try! (contract-call? .event-module log-event "credential-metadata-updated" 
+          (try! (contract-call? .event-module log-event u"credential-metadata-updated" 
                                 credential-id 
-                                caller 
                                 none))
           
           (ok true)

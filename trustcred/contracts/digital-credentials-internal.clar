@@ -23,41 +23,28 @@
     ;; Ensure caller is an authorized contract
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
-    ;; Store the credential
-    (map-set .digital-credentials credentials
-      { credential-id: credential-id }
-      {
-        issuer: issuer,
-        recipient: recipient,
-        schema-id: schema-id,
-        issued-at: block-height,
-        expires-at: expires-at,
-        revoked: false,
-        data-hash: data-hash,
-        metadata-uri: metadata-uri
-      }
-    )
+    ;; Store the credential via the main contract
+    (try! (contract-call? .digital-credentials store-credential
+                          credential-id
+                          issuer
+                          recipient
+                          schema-id
+                          data-hash
+                          metadata-uri
+                          expires-at))
     
     (ok true)
   )
 )
 
-;; Revoke a credential (internal)
+;; Revoke a credential (internal) - Fixed begin block structure
 (define-public (revoke-credential (credential-id (buff 32)))
   (begin
     ;; Ensure caller is an authorized contract
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
-    ;; Get current credential data
-    (match (map-get? .digital-credentials credentials { credential-id: credential-id })
-      credential-data
-        ;; Update the credential to set revoked flag
-        (map-set .digital-credentials credentials
-          { credential-id: credential-id }
-          (merge credential-data { revoked: true })
-        )
-      (err err-not-found)
-    )
+    ;; Call the revoke function in the main contract
+    (try! (contract-call? .digital-credentials revoke-credential credential-id))
     
     (ok true)
   )
@@ -70,17 +57,22 @@
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
     ;; Get current credential data
-    (match (map-get? .digital-credentials credentials { credential-id: credential-id })
+    (match (contract-call? .digital-credentials get-credential credential-id)
       credential-data
-        ;; Update the credential's recipient
-        (map-set .digital-credentials credentials
-          { credential-id: credential-id }
-          (merge credential-data { recipient: new-recipient })
+        (begin
+          ;; Store updated credential
+          (try! (contract-call? .digital-credentials store-credential
+                                credential-id
+                                (get issuer credential-data)
+                                new-recipient
+                                (get schema-id credential-data)
+                                (get data-hash credential-data)
+                                (get metadata-uri credential-data)
+                                (get expires-at credential-data)))
+          (ok true)
         )
       (err err-not-found)
     )
-    
-    (ok true)
   )
 )
 
@@ -91,18 +83,34 @@
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
     ;; Get current credential data
-    (match (map-get? .digital-credentials credentials { credential-id: credential-id })
+    (match (contract-call? .digital-credentials get-credential credential-id)
       credential-data
-        ;; Update the credential's metadata URI
-        (map-set .digital-credentials credentials
-          { credential-id: credential-id }
-          (merge credential-data { metadata-uri: new-metadata-uri })
+        (begin
+          ;; Store updated credential
+          (try! (contract-call? .digital-credentials store-credential
+                                credential-id
+                                (get issuer credential-data)
+                                (get recipient credential-data)
+                                (get schema-id credential-data)
+                                (get data-hash credential-data)
+                                new-metadata-uri
+                                (get expires-at credential-data)))
+          (ok true)
         )
       (err err-not-found)
     )
-    
-    (ok true)
   )
+)
+
+;; Data maps for tracking credentials by recipient and issuer
+(define-map recipient-credentials
+  { recipient: principal }
+  { credential-ids: (list 100 (buff 32)) }
+)
+
+(define-map issuer-credentials
+  { issuer: principal }
+  { credential-ids: (list 100 (buff 32)) }
 )
 
 ;; Add credential to recipient's list (internal)
@@ -112,9 +120,9 @@
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
     ;; Add credential to recipient's list
-    (match (map-get? .digital-credentials recipient-credentials { recipient: recipient })
+    (match (map-get? recipient-credentials { recipient: recipient })
       existing-data 
-        (map-set .digital-credentials recipient-credentials
+        (map-set recipient-credentials
           { recipient: recipient }
           { credential-ids: (unwrap! (as-max-len? 
                                        (append (get credential-ids existing-data) credential-id)
@@ -122,7 +130,7 @@
                                     (err u108)) }
         )
       ;; No existing credentials for this recipient
-      (map-set .digital-credentials recipient-credentials
+      (map-set recipient-credentials
         { recipient: recipient }
         { credential-ids: (list credential-id) }
       )
@@ -139,12 +147,12 @@
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
     ;; Remove credential from recipient's list
-    (match (map-get? .digital-credentials recipient-credentials { recipient: recipient })
+    (match (map-get? recipient-credentials { recipient: recipient })
       existing-data 
         (let ((updated-list (contract-call? .utilities remove-buff 
                                           (get credential-ids existing-data) 
                                           credential-id)))
-          (map-set .digital-credentials recipient-credentials
+          (map-set recipient-credentials
             { recipient: recipient }
             { credential-ids: updated-list }
           )
@@ -163,9 +171,9 @@
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
     ;; Add credential to issuer's list
-    (match (map-get? .digital-credentials issuer-credentials { issuer: issuer })
+    (match (map-get? issuer-credentials { issuer: issuer })
       existing-data 
-        (map-set .digital-credentials issuer-credentials
+        (map-set issuer-credentials
           { issuer: issuer }
           { credential-ids: (unwrap! (as-max-len? 
                                        (append (get credential-ids existing-data) credential-id)
@@ -173,7 +181,7 @@
                                     (err u108)) }
         )
       ;; No existing credentials for this issuer
-      (map-set .digital-credentials issuer-credentials
+      (map-set issuer-credentials
         { issuer: issuer }
         { credential-ids: (list credential-id) }
       )
@@ -183,16 +191,28 @@
   )
 )
 
+;; Read-only functions to get credentials by recipient/issuer
+(define-read-only (get-recipient-credentials (recipient principal))
+  (match (map-get? recipient-credentials { recipient: recipient })
+    data (ok (get credential-ids data))
+    (ok (list))
+  )
+)
+
+(define-read-only (get-issuer-credentials (issuer principal))
+  (match (map-get? issuer-credentials { issuer: issuer })
+    data (ok (get credential-ids data))
+    (ok (list))
+  )
+)
+
 ;; Helper function to check if caller is an authorized contract
 (define-read-only (is-authorized-contract (contract principal))
   (or
     (is-eq contract (as-contract tx-sender))
-    (is-eq contract (as-contract .digital-credentials))
-    (is-eq contract (as-contract .credential-operations))
-    (is-eq contract (as-contract .issuer-management))
-    (is-eq contract .digital-credentials)
     (is-eq contract .credential-operations)
     (is-eq contract .issuer-management)
+    (is-eq contract .digital-credentials)
   )
 )
 
