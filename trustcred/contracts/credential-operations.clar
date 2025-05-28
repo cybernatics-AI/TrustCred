@@ -97,7 +97,7 @@
           )
           
           ;; Check schema to see if transfer is allowed
-          (try! (is-transfer-allowed credential-id))
+          (asserts! (is-ok (is-transfer-allowed credential-id)) err-transfer-not-allowed)
           
           ;; Create a new credential with updated recipient (simplified approach)
           (try! (contract-call? .digital-credentials store-credential
