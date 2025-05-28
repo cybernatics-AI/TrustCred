@@ -60,20 +60,20 @@
           ;; Check if credential is not already revoked
           (asserts! (not (get revoked credential)) err-already-exists)
           
-          ;; Revoke the credential directly
+          ;; Revoke the credential using try! to handle the response properly
           (try! (contract-call? .digital-credentials revoke-credential credential-id))
           
-          ;; Log the revocation event
-          (try! (contract-call? .event-module log-event u"credential-revoked" 
-                                credential-id 
-                                none))
+          ;; Log the revocation event using try! to handle response
+          (try! (contract-call? .event-module log-event u"credential-revoked" credential-id none))
           
           ;; Include reason in the event log
           (print { event: "revocation-reason", credential-id: credential-id, reason: reason })
           
+          ;; Return success
           (ok true)
         )
-      (err err-not-found)
+      ;; Return error if credential not found - Fixed: return consistent error type
+      err-not-found
     )
   )
 )
@@ -116,7 +116,7 @@
           
           (ok true)
         )
-      (err err-not-found)
+      err-not-found
     )
   )
 )
@@ -150,7 +150,7 @@
           
           (ok true)
         )
-      (err err-not-found)
+      err-not-found
     )
   )
 )

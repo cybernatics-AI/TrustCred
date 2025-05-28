@@ -56,11 +56,11 @@
     ;; Ensure caller is an authorized contract
     (asserts! (is-authorized-contract tx-sender) err-unauthorized)
     
-    ;; Get current credential data
+    ;; Get current credential data and handle the operation
     (match (contract-call? .digital-credentials get-credential credential-id)
       credential-data
+        ;; Store updated credential using try! to handle response properly
         (begin
-          ;; Store updated credential
           (try! (contract-call? .digital-credentials store-credential
                                 credential-id
                                 (get issuer credential-data)
@@ -71,7 +71,8 @@
                                 (get expires-at credential-data)))
           (ok true)
         )
-      (err err-not-found)
+      ;; Return error if credential not found - Fixed: return consistent error type
+      err-not-found
     )
   )
 )
@@ -97,7 +98,7 @@
                                 (get expires-at credential-data)))
           (ok true)
         )
-      (err err-not-found)
+      err-not-found
     )
   )
 )
@@ -157,7 +158,7 @@
           )
           (ok true)
         )
-      (err err-not-found)
+      err-not-found
     )
   )
 )
