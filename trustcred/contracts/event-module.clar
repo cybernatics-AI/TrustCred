@@ -1,7 +1,5 @@
-;; =============================================================================
-;; ERROR FIX 2: event-module.clar
+;; event-module.clar
 ;; Fixed match syntax error
-;; =============================================================================
 
 ;; Define constants
 (define-constant contract-owner tx-sender)

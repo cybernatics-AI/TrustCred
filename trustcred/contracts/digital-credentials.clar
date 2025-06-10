@@ -1,6 +1,5 @@
-;; FIXED: digital-credentials.clar
+;; digital-credentials.clar
 ;; Core Module - Fixed version with proper error handling
-
 
 ;; Define constants
 (define-constant contract-owner tx-sender)
