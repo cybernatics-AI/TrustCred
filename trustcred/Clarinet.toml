@@ -1,0 +1,42 @@
+[project]
+name = "trustcred"
+description = "A decentralized digital credential verification system built on the Stacks blockchain"
+authors = []
+telemetry = false
+cache_dir = "./.cache"
+
+[[project.requirements]]
+contract_id = "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard"
+
+[contracts.digital-credentials]
+path = "contracts/digital-credentials.clar"
+depends_on = ["issuer-management", "utilities"]
+
+[contracts.digital-credentials-internal]
+path = "contracts/digital-credentials-internal.clar"
+depends_on = ["digital-credentials", "utilities"]
+
+[contracts.credential-operations]
+path = "contracts/credential-operations.clar"
+depends_on = ["digital-credentials", "digital-credentials-internal", "issuer-management", "event-module", "utilities"]
+
+[contracts.issuer-management]
+path = "contracts/issuer-management.clar"
+depends_on = []
+
+[contracts.event-module]
+path = "contracts/event-module.clar"
+depends_on = []
+
+[contracts.utilities]
+path = "contracts/utilities.clar"
+depends_on = []
+
+[repl.analysis]
+passes = ["check_checker"]
+
+[repl.analysis.check_checker]
+strict = false
+trusted_sender = false
+trusted_caller = false
+callee_filter = false
