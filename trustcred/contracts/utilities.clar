@@ -1,5 +1,4 @@
 ;; Utilities (utilities.clar)
-;; WORKING VERSION 
 
 ;; Define constants
 (define-constant contract-owner tx-sender)

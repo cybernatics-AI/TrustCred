@@ -1,7 +1,5 @@
-;; =============================================================================
-;; ERROR FIX 1: credential-operations.clar
+;; credential-operations.clar
 ;; Fixed contract reference error
-;; =============================================================================
 
 ;; Error codes
 (define-constant err-unauthorized (err u102))

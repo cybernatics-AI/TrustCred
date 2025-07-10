@@ -1,5 +1,4 @@
 ;; TrustCred: Digital Credentials Internal (digital-credentials-internal.clar)
-;; Stage 3: Complete implementation with advanced access control and utility integration
 
 ;; Define constants
 (define-constant contract-owner tx-sender)
