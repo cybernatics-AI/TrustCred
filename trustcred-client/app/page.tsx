@@ -1,102 +1,224 @@
-import Image from "next/image";
+import { trustCredTheme } from "../lib/theme";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Hero Section with Gradient */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 gradient-hero animate-gradient"></div>
+        <div className="relative z-10 container mx-auto px-6 py-24 text-center">
+          <h1 className="text-5xl font-bold text-white mb-6">
+            TrustCred
+          </h1>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Secure, verifiable digital credentials powered by blockchain technology. 
+            Build trust in the digital world with our comprehensive credential management platform.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button className="btn-gradient">Get Started</button>
+            <button className="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20">
+              Learn More
+            </button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-16 text-foreground">
+            Trusted by Organizations Worldwide
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {/* Feature Cards */}
+            <div className="card p-8 hover:shadow-trust transition-all duration-300">
+              <div className="w-12 h-12 bg-trust-blue-100 rounded-lg flex items-center justify-center mb-6">
+                <div className="w-6 h-6 bg-trust-blue-600 rounded"></div>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-card-foreground">Secure Verification</h3>
+              <p className="text-muted-foreground">
+                Cryptographically secure credential verification using blockchain technology
+                for tamper-proof authentication.
+              </p>
+            </div>
+            
+            <div className="card p-8 hover:shadow-trust transition-all duration-300">
+              <div className="w-12 h-12 bg-security-green-100 rounded-lg flex items-center justify-center mb-6">
+                <div className="w-6 h-6 bg-security-green-600 rounded"></div>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-card-foreground">Instant Issuance</h3>
+              <p className="text-muted-foreground">
+                Issue digital credentials instantly with our streamlined workflow
+                and automated verification processes.
+              </p>
+            </div>
+            
+            <div className="card p-8 hover:shadow-trust transition-all duration-300">
+              <div className="w-12 h-12 bg-warning-amber-100 rounded-lg flex items-center justify-center mb-6">
+                <div className="w-6 h-6 bg-warning-amber-600 rounded"></div>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-card-foreground">Global Standards</h3>
+              <p className="text-muted-foreground">
+                Built on open standards and interoperable with existing credential
+                management systems worldwide.
+              </p>
+            </div>
+          </div>
+
+          {/* Status Indicators Demo */}
+          <div className="bg-card rounded-xl p-8 border border-border">
+            <h3 className="text-2xl font-semibold mb-8 text-card-foreground">Credential Status Examples</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="space-y-4">
+                <h4 className="font-medium text-card-foreground">Verified Credential</h4>
+                <div className="p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-card-foreground">Bachelor&apos;s Degree</span>
+                    <span className="status-verified">Verified</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">University of Excellence</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-medium text-card-foreground">Pending Verification</h4>
+                <div className="p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-card-foreground">Professional Certificate</span>
+                    <span className="status-pending">Pending</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Tech Institute</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-medium text-card-foreground">Revoked Credential</h4>
+                <div className="p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-card-foreground">Expired License</span>
+                    <span className="status-revoked">Revoked</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Licensing Board</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-medium text-card-foreground">Action Buttons</h4>
+                <div className="space-y-2">
+                  <button className="btn-primary w-full text-sm">Issue Credential</button>
+                  <button className="btn-accent w-full text-sm">Verify Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Color Palette Preview */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-16 text-foreground">
+            TrustCred Design System
+          </h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Trust Blue Palette */}
+            <div className="card p-6">
+              <h3 className="text-xl font-semibold mb-6 text-card-foreground">Trust Blue</h3>
+              <div className="space-y-2">
+                {Object.entries(trustCredTheme.colors.trustBlue).map(([shade, color]) => (
+                  <div key={shade} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded border border-border"
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      <span className="text-sm font-mono text-muted-foreground">{shade}</span>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">{color}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Security Green Palette */}
+            <div className="card p-6">
+              <h3 className="text-xl font-semibold mb-6 text-card-foreground">Security Green</h3>
+              <div className="space-y-2">
+                {Object.entries(trustCredTheme.colors.securityGreen).map(([shade, color]) => (
+                  <div key={shade} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded border border-border"
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      <span className="text-sm font-mono text-muted-foreground">{shade}</span>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">{color}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Professional Gray Palette */}
+            <div className="card p-6">
+              <h3 className="text-xl font-semibold mb-6 text-card-foreground">Professional Gray</h3>
+              <div className="space-y-2">
+                {Object.entries(trustCredTheme.colors.professionalGray).map(([shade, color]) => (
+                  <div key={shade} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded border border-border"
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      <span className="text-sm font-mono text-muted-foreground">{shade}</span>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">{color}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Gradient Examples */}
+          <div className="mt-12">
+            <h3 className="text-2xl font-semibold mb-8 text-center text-foreground">Gradient Examples</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="gradient-primary h-24 rounded-lg flex items-center justify-center">
+                <span className="text-white font-semibold">Primary</span>
+              </div>
+              <div className="gradient-secondary h-24 rounded-lg flex items-center justify-center">
+                <span className="text-white font-semibold">Secondary</span>
+              </div>
+              <div className="gradient-hero h-24 rounded-lg flex items-center justify-center">
+                <span className="text-white font-semibold">Hero</span>
+              </div>
+              <div className="gradient-card h-24 rounded-lg flex items-center justify-center border border-border">
+                <span className="text-foreground font-semibold">Card</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-professional-gray-900 text-professional-gray-100 py-12">
+        <div className="container mx-auto px-6 text-center">
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold gradient-hero bg-clip-text text-transparent mb-4">
+              TrustCred
+            </h3>
+            <p className="text-professional-gray-400 max-w-md mx-auto">
+              Building the future of digital credentials with security, trust, and innovation.
+            </p>
+          </div>
+          <div className="border-t border-professional-gray-700 pt-8">
+            <p className="text-professional-gray-500">
+              © 2024 TrustCred. All rights reserved.
+            </p>
+          </div>
+        </div>
       </footer>
     </div>
   );
