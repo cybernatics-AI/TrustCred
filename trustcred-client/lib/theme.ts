@@ -36,6 +36,20 @@ export const trustCredTheme = {
       900: '#14532d',
     },
     
+    // Lemon-lime accent colors
+    lemonLime: {
+      50: '#f7fee7',
+      100: '#ecfccb',
+      200: '#d9f99d',
+      300: '#bef264',
+      400: '#a3e635',
+      500: '#84cc16',
+      600: '#65a30d',
+      700: '#4d7c0f',
+      800: '#365314',
+      900: '#1a2e05',
+    },
+    
     // Professional neutral colors
     professionalGray: {
       50: '#f8fafc',
@@ -77,11 +91,18 @@ export const trustCredTheme = {
   gradients: {
     primary: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
     secondary: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-    hero: 'linear-gradient(135deg, #2563eb 0%, #22c55e 50%, #1d4ed8 100%)',
+    hero: 'linear-gradient(135deg, #84cc16 0%, #22c55e 50%, #2563eb 100%)',
+    heroLight: 'linear-gradient(135deg, #a3e635 0%, #4ade80 50%, #ffffff 100%)',
+    lemon: 'linear-gradient(135deg, #ecfccb 0%, #a3e635 50%, #84cc16 100%)',
+    lemonDark: 'linear-gradient(135deg, #4d7c0f 0%, #84cc16 50%, #a3e635 100%)',
+    greenWhite: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 30%, #bbf7d0 70%, #86efac 100%)',
+    limeToBlue: 'linear-gradient(135deg, #a3e635 0%, #84cc16 25%, #22c55e 75%, #2563eb 100%)',
     card: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
     cardDark: 'linear-gradient(145deg, #1e293b 0%, #334155 100%)',
     hover: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
     hoverDark: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+    accent: 'linear-gradient(135deg, #84cc16 0%, #a3e635 100%)',
+    accentDark: 'linear-gradient(135deg, #365314 0%, #4d7c0f 100%)',
   },
   
   shadows: {

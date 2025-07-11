@@ -26,6 +26,18 @@
   --security-green-800: #166534;
   --security-green-900: #14532d;
 
+  /* Lemon-Lime Colors */
+  --lemon-lime-50: #f7fee7;
+  --lemon-lime-100: #ecfccb;
+  --lemon-lime-200: #d9f99d;
+  --lemon-lime-300: #bef264;
+  --lemon-lime-400: #a3e635;
+  --lemon-lime-500: #84cc16;
+  --lemon-lime-600: #65a30d;
+  --lemon-lime-700: #4d7c0f;
+  --lemon-lime-800: #365314;
+  --lemon-lime-900: #1a2e05;
+
   /* Professional Gray */
   --professional-gray-50: #f8fafc;
   --professional-gray-100: #f1f5f9;
@@ -79,9 +91,16 @@
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, var(--trust-blue-600) 0%, var(--trust-blue-700) 100%);
   --gradient-secondary: linear-gradient(135deg, var(--security-green-500) 0%, var(--security-green-600) 100%);
-  --gradient-hero: linear-gradient(135deg, var(--trust-blue-600) 0%, var(--security-green-500) 50%, var(--trust-blue-700) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--security-green-500) 50%, var(--trust-blue-600) 100%);
+  --gradient-hero-light: linear-gradient(135deg, var(--lemon-lime-400) 0%, var(--security-green-400) 50%, rgba(255, 255, 255, 0.9) 100%);
+  --gradient-lemon: linear-gradient(135deg, var(--lemon-lime-100) 0%, var(--lemon-lime-400) 50%, var(--lemon-lime-500) 100%);
+  --gradient-lemon-dark: linear-gradient(135deg, var(--lemon-lime-700) 0%, var(--lemon-lime-500) 50%, var(--lemon-lime-400) 100%);
+  --gradient-green-white: linear-gradient(135deg, var(--security-green-50) 0%, var(--security-green-100) 30%, var(--security-green-200) 70%, var(--security-green-300) 100%);
+  --gradient-lime-to-blue: linear-gradient(135deg, var(--lemon-lime-400) 0%, var(--lemon-lime-500) 25%, var(--security-green-500) 75%, var(--trust-blue-600) 100%);
   --gradient-card: linear-gradient(145deg, #ffffff 0%, var(--professional-gray-50) 100%);
   --gradient-hover: linear-gradient(135deg, var(--trust-blue-500) 0%, var(--trust-blue-600) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--lemon-lime-400) 100%);
+  --gradient-accent-dark: linear-gradient(135deg, var(--lemon-lime-700) 0%, var(--lemon-lime-600) 100%);
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -114,9 +133,16 @@
     /* Dark mode gradients */
     --gradient-primary: linear-gradient(135deg, var(--trust-blue-500) 0%, var(--trust-blue-600) 100%);
     --gradient-secondary: linear-gradient(135deg, var(--security-green-400) 0%, var(--security-green-500) 100%);
-    --gradient-hero: linear-gradient(135deg, var(--trust-blue-500) 0%, var(--security-green-400) 50%, var(--trust-blue-600) 100%);
+    --gradient-hero: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--security-green-400) 50%, var(--trust-blue-500) 100%);
+    --gradient-hero-light: linear-gradient(135deg, var(--lemon-lime-300) 0%, var(--security-green-300) 50%, rgba(255, 255, 255, 0.9) 100%);
+    --gradient-lemon: linear-gradient(135deg, var(--lemon-lime-700) 0%, var(--lemon-lime-500) 50%, var(--lemon-lime-400) 100%);
+    --gradient-lemon-dark: linear-gradient(135deg, var(--lemon-lime-800) 0%, var(--lemon-lime-600) 50%, var(--lemon-lime-500) 100%);
+    --gradient-green-white: linear-gradient(135deg, var(--security-green-800) 0%, var(--security-green-600) 30%, var(--security-green-400) 70%, var(--security-green-300) 100%);
+    --gradient-lime-to-blue: linear-gradient(135deg, var(--lemon-lime-400) 0%, var(--lemon-lime-500) 25%, var(--security-green-500) 75%, var(--trust-blue-500) 100%);
     --gradient-card: linear-gradient(145deg, var(--professional-gray-800) 0%, var(--professional-gray-700) 100%);
     --gradient-hover: linear-gradient(135deg, var(--trust-blue-400) 0%, var(--trust-blue-500) 100%);
+    --gradient-accent: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--lemon-lime-400) 100%);
+    --gradient-accent-dark: linear-gradient(135deg, var(--lemon-lime-800) 0%, var(--lemon-lime-700) 100%);
     
     /* Dark mode shadows */
     --shadow-trust: 0 10px 25px -5px rgba(59, 130, 246, 0.3), 0 8px 10px -6px rgba(59, 130, 246, 0.2);
@@ -143,12 +169,40 @@ body {
   background: var(--gradient-hero);
 }
 
+.gradient-hero-light {
+  background: var(--gradient-hero-light);
+}
+
+.gradient-lemon {
+  background: var(--gradient-lemon);
+}
+
+.gradient-lemon-dark {
+  background: var(--gradient-lemon-dark);
+}
+
+.gradient-green-white {
+  background: var(--gradient-green-white);
+}
+
+.gradient-lime-to-blue {
+  background: var(--gradient-lime-to-blue);
+}
+
 .gradient-card {
   background: var(--gradient-card);
 }
 
 .gradient-hover:hover {
   background: var(--gradient-hover);
+}
+
+.gradient-accent {
+  background: var(--gradient-accent);
+}
+
+.gradient-accent-dark {
+  background: var(--gradient-accent-dark);
 }
 
 /* Utility classes for trust-themed shadows */
@@ -165,6 +219,85 @@ body {
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced Animation utilities */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 1s ease-out 0.2s both;
+}
+
+.animate-scale-in {
+  animation: scale-in 1s ease-out 0.4s both;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.7;
+  }
+  33% { 
+    transform: translateY(-20px) rotate(5deg);
+    opacity: 0.9;
+  }
+  66% { 
+    transform: translateY(-10px) rotate(-3deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Enhanced gradient animation */
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradient-flow 8s ease infinite;
+}
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
   100% { background-position: 0% 50%; }
 }
 

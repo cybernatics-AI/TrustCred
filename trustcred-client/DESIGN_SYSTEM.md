@@ -256,4 +256,48 @@ trustcred-client/
 └── tailwind.config.js     # Tailwind CSS configuration
 ```
 
+## Logo and Branding
+
+### TrustCred Logo
+
+The TrustCred logo features a shield-based design that embodies trust, security, and digital verification. The logo combines:
+
+- **Shield Shape**: Represents security and protection
+- **Checkmark**: Symbolizes verification and trust
+- **Green Gradient**: Conveys growth, sustainability, and positive validation
+- **Digital Dots**: Subtle indicators of digital/blockchain technology
+
+#### Logo Variations
+
+```tsx
+import { TrustCredLogo, TrustCredIcon } from '../components/trustcred-logo';
+
+// Full animated logo (default)
+<TrustCredLogo size={40} />
+
+// Large logo for headers
+<TrustCredLogo size={60} />
+
+// Simplified icon version
+<TrustCredIcon size={32} />
+
+// Static version (no animations)
+<TrustCredLogo size={40} showAnimation={false} />
+```
+
+#### Logo Colors
+
+The logo uses a four-stop gradient that aligns with our green theme:
+- **Start**: `#a3e635` (Lemon-lime 400)
+- **Mid-1**: `#84cc16` (Lemon-lime 500)  
+- **Mid-2**: `#4ade80` (Security Green 400)
+- **End**: `#22c55e` (Security Green 500)
+
+#### Usage Guidelines
+
+- **Minimum Size**: 24px for digital use, 16mm for print
+- **Clear Space**: Maintain at least 1/2 the logo width as clear space around the logo
+- **Background**: Works best on light backgrounds, white accent provides contrast on dark
+- **Animation**: Use animated version for interactive elements, static for print/favicon
+
 This design system provides a solid foundation for building the TrustCred platform while maintaining consistency, accessibility, and professional appearance across all components and pages.
