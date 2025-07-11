@@ -3,44 +3,12 @@
 import Link from "next/link";
 import { TrustCredLogo } from "./test-logo";
 
-const footerLinks = {
-  product: {
-    title: "Product",
-    links: [
-      { name: "Features", href: "/features" },
-      { name: "Security", href: "/security" },
-      { name: "Integrations", href: "/integrations" },
-      { name: "API", href: "/api" },
-    ],
-  },
-  company: {
-    title: "Company",
-    links: [
-      { name: "About", href: "/about" },
-      { name: "Blog", href: "/blog" },
-      { name: "Careers", href: "/careers" },
-      { name: "Contact", href: "/contact" },
-    ],
-  },
-  resources: {
-    title: "Resources",
-    links: [
-      { name: "Documentation", href: "/docs" },
-      { name: "Help Center", href: "/help" },
-      { name: "Community", href: "/community" },
-      { name: "Status", href: "/status" },
-    ],
-  },
-  legal: {
-    title: "Legal",
-    links: [
-      { name: "Privacy", href: "/privacy" },
-      { name: "Terms", href: "/terms" },
-      { name: "Security", href: "/security" },
-      { name: "Compliance", href: "/compliance" },
-    ],
-  },
-};
+const footerLinks = [
+  { name: "About", href: "/about" },
+  { name: "Privacy", href: "/privacy" },
+  { name: "Terms", href: "/terms" },
+  { name: "Contact", href: "/contact" },
+];
 
 const socialLinks = [
   {
@@ -79,106 +47,54 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className="bg-gradient-to-b from-card to-card/50 border-t border-border backdrop-blur-sm">
-      <div className="container mx-auto px-6 py-12">
-        {/* Main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-          {/* Brand column */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center space-x-3 mb-6 group">
-              <div className="relative">
-                <TrustCredLogo 
-                  size={35} 
-                  variant="full"
-                  showAnimation={true}
-                  className="transform transition-all duration-500 group-hover:scale-105"
-                />
-              </div>
+      <div className="container mx-auto px-6 py-6">
+        {/* Single row footer */}
+        <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+          {/* Brand and copyright */}
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
+            <Link href="/" className="flex items-center space-x-2 group">
+              <TrustCredLogo 
+                size={24} 
+                variant="full"
+                showAnimation={true}
+                className="transform transition-all duration-500 group-hover:scale-105"
+              />
             </Link>
             
-            <p className="text-muted-foreground mb-6 max-w-sm leading-relaxed">
-              Building the future of digital credentials with security, trust, and innovation. 
-              Empowering organizations to issue and verify credentials with confidence.
-            </p>
-            
-            {/* Newsletter signup */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground">Stay updated</h4>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-3 py-2 bg-background/50 backdrop-blur-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-lemon-lime-400 focus:border-lemon-lime-400 transition-all duration-300 hover:bg-background/70"
-                />
-                <button className="px-4 py-2 bg-gradient-to-r from-lemon-lime-400 via-lemon-lime-500 to-security-green-500 text-white rounded-lg hover:from-lemon-lime-500 hover:via-lemon-lime-600 hover:to-security-green-600 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 whitespace-nowrap shadow-lg hover:shadow-xl group relative overflow-hidden">
-                  <span className="relative z-10">Subscribe</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </button>
-              </div>
+            <div className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} TrustCred. All rights reserved.
             </div>
           </div>
 
-          {/* Footer links */}
-          {Object.values(footerLinks).map((section) => (
-            <div key={section.title}>
-              <h3 className="font-semibold text-foreground mb-4">{section.title}</h3>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-muted-foreground hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 transition-all duration-300 text-sm relative group"
-                    >
-                      <span className="relative">
-                        {link.name}
-                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-lemon-lime-400 to-security-green-500 group-hover:w-full transition-all duration-300"></span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom section */}
-        <div className="border-t border-border pt-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-            {/* Copyright */}
-            <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} TrustCred. All rights reserved.
+          {/* Links and social */}
+          <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-6">
+            {/* Footer links */}
+            <div className="flex space-x-4">
+              {footerLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-muted-foreground hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 transition-colors duration-300 text-xs"
+                >
+                  {link.name}
+                </Link>
+              ))}
             </div>
 
             {/* Social links */}
-            <div className="flex items-center space-x-6">
-              <span className="text-sm text-muted-foreground">Follow us</span>
-              <div className="flex space-x-4">
-                {socialLinks.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-muted-foreground hover:text-lemon-lime-500 transition-all duration-300 transform hover:scale-125 hover:-translate-y-1 p-2 rounded-lg hover:bg-gradient-to-br hover:from-lemon-lime-50 hover:to-security-green-50 dark:hover:from-lemon-lime-950 dark:hover:to-security-green-950"
-                    aria-label={item.name}
-                  >
+            <div className="flex space-x-3">
+              {socialLinks.slice(0, 2).map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-muted-foreground hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 transition-colors duration-300"
+                  aria-label={item.name}
+                >
+                  <div className="w-4 h-4">
                     {item.icon}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Trust indicators */}
-            <div className="flex items-center space-x-6 text-xs text-muted-foreground">
-              <div className="flex items-center space-x-2 group">
-                <div className="w-3 h-3 bg-gradient-to-r from-security-green-400 to-security-green-500 rounded-full animate-pulse shadow-lg"></div>
-                <span className="group-hover:text-security-green-600 dark:group-hover:text-security-green-400 transition-colors duration-300">SOC 2 Compliant</span>
-              </div>
-              <div className="flex items-center space-x-2 group">
-                <div className="w-3 h-3 bg-gradient-to-r from-lemon-lime-400 to-lemon-lime-500 rounded-full animate-pulse shadow-lg" style={{ animationDelay: '0.5s' }}></div>
-                <span className="group-hover:text-lemon-lime-600 dark:group-hover:text-lemon-lime-400 transition-colors duration-300">GDPR Ready</span>
-              </div>
-              <div className="flex items-center space-x-2 group">
-                <div className="w-3 h-3 bg-gradient-to-r from-trust-blue-400 to-trust-blue-500 rounded-full animate-pulse shadow-lg" style={{ animationDelay: '1s' }}></div>
-                <span className="group-hover:text-trust-blue-600 dark:group-hover:text-trust-blue-400 transition-colors duration-300">ISO 27001</span>
-              </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </div>

@@ -5,15 +5,32 @@ import { useTheme } from "./theme-provider";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  const handleToggle = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    console.log("Theme toggle clicked:", theme, "->", newTheme);
+    setTheme(newTheme);
+  };
 
   return (
     <button
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background text-foreground transition-all duration-300 hover:bg-gradient-to-br hover:from-lemon-lime-50 hover:to-security-green-50 dark:hover:from-lemon-lime-950 dark:hover:to-security-green-950 hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 hover:border-lemon-lime-300 dark:hover:border-lemon-lime-700 focus:outline-none focus:ring-2 focus:ring-lemon-lime-400 focus:ring-offset-2 transform hover:scale-110 hover:-translate-y-0.5 shadow-sm hover:shadow-lg"
-      aria-label="Toggle theme"
+      onClick={handleToggle}
+      className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background text-professional-gray-700 dark:text-professional-gray-300 transition-all duration-300 hover:bg-gradient-to-br hover:from-lemon-lime-50 hover:to-security-green-50 dark:hover:from-lemon-lime-950 dark:hover:to-security-green-950 hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 hover:border-lemon-lime-300 dark:hover:border-lemon-lime-700 focus:outline-none focus:ring-2 focus:ring-lemon-lime-400 focus:ring-offset-2 transform hover:scale-110 hover:-translate-y-0.5 shadow-sm hover:shadow-lg"
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      title={`Current: ${theme} mode`}
     >
+      {/* Sun icon - shown when dark mode is active */}
       <svg
-        className={`h-4 w-4 transition-all duration-300 ${
+        className={`h-4 w-4 transition-all duration-500 ${
           theme === "dark" ? "rotate-0 scale-100" : "rotate-90 scale-0"
         }`}
         fill="none"
@@ -27,8 +44,9 @@ export function ThemeToggle() {
           d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
         />
       </svg>
+      {/* Moon icon - shown when light mode is active */}
       <svg
-        className={`absolute h-4 w-4 transition-all duration-300 ${
+        className={`absolute h-4 w-4 transition-all duration-500 ${
           theme === "dark" ? "rotate-90 scale-0" : "rotate-0 scale-100"
         }`}
         fill="none"

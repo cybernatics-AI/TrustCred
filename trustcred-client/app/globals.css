@@ -79,8 +79,8 @@
   --secondary: var(--professional-gray-100);
   --secondary-foreground: var(--professional-gray-900);
   --muted: var(--professional-gray-100);
-  --muted-foreground: var(--professional-gray-500);
-  --accent: var(--security-green-500);
+  --muted-foreground: var(--professional-gray-600);
+  --accent: var(--security-green-600);
   --accent-foreground: #ffffff;
   --destructive: var(--danger-red-500);
   --destructive-foreground: #ffffff;
@@ -110,43 +110,41 @@
   --shadow-trust: 0 10px 25px -5px rgba(37, 99, 235, 0.2), 0 8px 10px -6px rgba(37, 99, 235, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--professional-gray-900);
-    --foreground: var(--professional-gray-50);
-    --card: var(--professional-gray-800);
-    --card-foreground: var(--professional-gray-50);
-    --primary: var(--trust-blue-500);
-    --primary-foreground: var(--professional-gray-900);
-    --secondary: var(--professional-gray-800);
-    --secondary-foreground: var(--professional-gray-50);
-    --muted: var(--professional-gray-800);
-    --muted-foreground: var(--professional-gray-400);
-    --accent: var(--security-green-400);
-    --accent-foreground: var(--professional-gray-900);
-    --destructive: var(--danger-red-400);
-    --destructive-foreground: var(--professional-gray-900);
-    --border: var(--professional-gray-700);
-    --input: var(--professional-gray-700);
-    --ring: var(--trust-blue-300);
-    
-    /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, var(--trust-blue-500) 0%, var(--trust-blue-600) 100%);
-    --gradient-secondary: linear-gradient(135deg, var(--security-green-400) 0%, var(--security-green-500) 100%);
-    --gradient-hero: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--security-green-400) 50%, var(--trust-blue-500) 100%);
-    --gradient-hero-light: linear-gradient(135deg, var(--lemon-lime-300) 0%, var(--security-green-300) 50%, rgba(255, 255, 255, 0.9) 100%);
-    --gradient-lemon: linear-gradient(135deg, var(--lemon-lime-700) 0%, var(--lemon-lime-500) 50%, var(--lemon-lime-400) 100%);
-    --gradient-lemon-dark: linear-gradient(135deg, var(--lemon-lime-800) 0%, var(--lemon-lime-600) 50%, var(--lemon-lime-500) 100%);
-    --gradient-green-white: linear-gradient(135deg, var(--security-green-800) 0%, var(--security-green-600) 30%, var(--security-green-400) 70%, var(--security-green-300) 100%);
-    --gradient-lime-to-blue: linear-gradient(135deg, var(--lemon-lime-400) 0%, var(--lemon-lime-500) 25%, var(--security-green-500) 75%, var(--trust-blue-500) 100%);
-    --gradient-card: linear-gradient(145deg, var(--professional-gray-800) 0%, var(--professional-gray-700) 100%);
-    --gradient-hover: linear-gradient(135deg, var(--trust-blue-400) 0%, var(--trust-blue-500) 100%);
-    --gradient-accent: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--lemon-lime-400) 100%);
-    --gradient-accent-dark: linear-gradient(135deg, var(--lemon-lime-800) 0%, var(--lemon-lime-700) 100%);
-    
-    /* Dark mode shadows */
-    --shadow-trust: 0 10px 25px -5px rgba(59, 130, 246, 0.3), 0 8px 10px -6px rgba(59, 130, 246, 0.2);
-  }
+.dark {
+  --background: var(--professional-gray-900);
+  --foreground: var(--professional-gray-50);
+  --card: var(--professional-gray-800);
+  --card-foreground: var(--professional-gray-50);
+  --primary: var(--trust-blue-500);
+  --primary-foreground: var(--professional-gray-900);
+  --secondary: var(--professional-gray-800);
+  --secondary-foreground: var(--professional-gray-50);
+  --muted: var(--professional-gray-800);
+  --muted-foreground: var(--professional-gray-400);
+  --accent: var(--security-green-400);
+  --accent-foreground: var(--professional-gray-900);
+  --destructive: var(--danger-red-400);
+  --destructive-foreground: var(--professional-gray-900);
+  --border: var(--professional-gray-700);
+  --input: var(--professional-gray-700);
+  --ring: var(--trust-blue-300);
+  
+  /* Dark mode gradients */
+  --gradient-primary: linear-gradient(135deg, var(--trust-blue-500) 0%, var(--trust-blue-600) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--security-green-400) 0%, var(--security-green-500) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--security-green-400) 50%, var(--trust-blue-500) 100%);
+  --gradient-hero-light: linear-gradient(135deg, var(--lemon-lime-300) 0%, var(--security-green-300) 50%, rgba(255, 255, 255, 0.9) 100%);
+  --gradient-lemon: linear-gradient(135deg, var(--lemon-lime-700) 0%, var(--lemon-lime-500) 50%, var(--lemon-lime-400) 100%);
+  --gradient-lemon-dark: linear-gradient(135deg, var(--lemon-lime-800) 0%, var(--lemon-lime-600) 50%, var(--lemon-lime-500) 100%);
+  --gradient-green-white: linear-gradient(135deg, var(--security-green-800) 0%, var(--security-green-600) 30%, var(--security-green-400) 70%, var(--security-green-300) 100%);
+  --gradient-lime-to-blue: linear-gradient(135deg, var(--lemon-lime-400) 0%, var(--lemon-lime-500) 25%, var(--security-green-500) 75%, var(--trust-blue-500) 100%);
+  --gradient-card: linear-gradient(145deg, var(--professional-gray-800) 0%, var(--professional-gray-700) 100%);
+  --gradient-hover: linear-gradient(135deg, var(--trust-blue-400) 0%, var(--trust-blue-500) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--lemon-lime-500) 0%, var(--lemon-lime-400) 100%);
+  --gradient-accent-dark: linear-gradient(135deg, var(--lemon-lime-800) 0%, var(--lemon-lime-700) 100%);
+  
+  /* Dark mode shadows */
+  --shadow-trust: 0 10px 25px -5px rgba(59, 130, 246, 0.3), 0 8px 10px -6px rgba(59, 130, 246, 0.2);
 }
 
 body {

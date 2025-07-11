@@ -29,13 +29,22 @@ export function ThemeProvider({
   storageKey = "trustcred-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage?.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize theme from localStorage after component mounts
+  useEffect(() => {
+    setMounted(true);
+    const storedTheme = localStorage.getItem(storageKey) as Theme;
+    if (storedTheme && (storedTheme === "light" || storedTheme === "dark" || storedTheme === "system")) {
+      setTheme(storedTheme);
+    }
+  }, [storageKey]);
 
   useEffect(() => {
+    if (!mounted) return;
+    
     const root = window.document.documentElement;
-
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
@@ -43,19 +52,18 @@ export function ThemeProvider({
         .matches
         ? "dark"
         : "light";
-
       root.classList.add(systemTheme);
       return;
     }
 
     root.classList.add(theme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage?.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
     },
   };
 

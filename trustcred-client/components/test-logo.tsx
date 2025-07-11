@@ -26,10 +26,10 @@ export function TrustCredLogo({
       </div>
       {variant === 'full' && (
         <div className="flex flex-col">
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">
-            Trust<span className="text-blue-600">Cred</span>
+          <span className="text-2xl font-bold text-foreground">
+            Trust<span className="text-trust-blue-600 dark:text-trust-blue-400">Cred</span>
           </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <span className="text-xs text-muted-foreground uppercase tracking-wide">
             Digital Credentials
           </span>
         </div>

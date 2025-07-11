@@ -8,14 +8,14 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-lemon-lime-400 via-security-green-400 to-security-green-600 animate-gradient opacity-90"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent"></div>
         <div className="relative z-10 container mx-auto px-6 py-32 text-center">
-          <div className="inline-flex items-center px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm mb-8 animate-fade-in">
+          <div className="inline-flex items-center px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm mb-8 animate-fade-in">
             <div className="w-2 h-2 bg-lemon-lime-300 rounded-full animate-pulse mr-2"></div>
             Building sustainable digital credentials
           </div>
           <h1 className="text-6xl md:text-7xl font-bold mb-8 animate-fade-in bg-gradient-to-r from-white via-white to-lemon-lime-100 bg-clip-text text-transparent">
             TrustCred
           </h1>
-          <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed animate-slide-up">
+          <p className="text-xl text-white mb-12 max-w-3xl mx-auto leading-relaxed animate-slide-up">
             Secure, verifiable digital credentials powered by blockchain technology. 
             Build trust in the digital world with our comprehensive credential management platform 
             featuring cutting-edge green technology and sustainable solutions.
