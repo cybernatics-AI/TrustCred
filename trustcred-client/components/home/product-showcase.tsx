@@ -42,15 +42,15 @@ export function ProductShowcase() {
   const [activeFeature, setActiveFeature] = useState("dashboard");
 
   return (
-    <section className="py-24 bg-background">
-      <div className="container mx-auto px-6">
+    <section className="py-32 bg-background">
+      <div className="container mx-auto px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
           <h2 className="text-4xl font-bold mb-4 text-foreground">
             Complete Credential Lifecycle Management
@@ -62,7 +62,7 @@ export function ProductShowcase() {
         </motion.div>
 
         {/* Product Features Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-20">
           {productFeatures.map((feature, index) => (
             <motion.div
               key={feature.id}
@@ -75,22 +75,22 @@ export function ProductShowcase() {
               }`}
               onClick={() => setActiveFeature(feature.id)}
             >
-              <div className={`bg-card rounded-2xl p-8 border-2 transition-all duration-300 ${
+              <div className={`bg-card rounded-xl p-6 border-2 transition-all duration-300 ${
                 activeFeature === feature.id 
-                  ? 'border-lemon-lime-400 shadow-xl bg-gradient-to-br from-lemon-lime-50/50 to-security-green-50/50 dark:from-lemon-lime-950/20 dark:to-security-green-950/20' 
-                  : 'border-border hover:border-lemon-lime-200 dark:hover:border-lemon-lime-800 shadow-lg hover:shadow-xl'
+                  ? 'border-lemon-lime-400 shadow-lg bg-gradient-to-br from-lemon-lime-50/50 to-security-green-50/50 dark:from-lemon-lime-950/20 dark:to-security-green-950/20' 
+                  : 'border-border hover:border-lemon-lime-200 dark:hover:border-lemon-lime-800 shadow-md hover:shadow-lg'
               }`}>
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 transition-transform duration-300 ${
+                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 transition-transform duration-300 ${
                   activeFeature === feature.id ? 'scale-110' : 'group-hover:scale-105'
                 }`}>
-                  <feature.icon className="w-8 h-8 text-white" />
+                  <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 
-                <h3 className="text-xl font-semibold mb-4 text-card-foreground">
+                <h3 className="text-lg font-semibold mb-3 text-card-foreground">
                   {feature.title}
                 </h3>
                 
-                <p className="text-muted-foreground leading-relaxed mb-6">
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                   {feature.description}
                 </p>
 

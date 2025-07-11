@@ -95,11 +95,11 @@ const cardVariants = {
 
 export function FeaturesGrid() {
   return (
-    <section className="py-24 bg-background">
-      <div className="container mx-auto px-6">
+    <section className="py-32 bg-background">
+      <div className="container mx-auto px-8">
         {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-20"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -116,7 +116,7 @@ export function FeaturesGrid() {
 
         {/* Features Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -130,25 +130,25 @@ export function FeaturesGrid() {
                 y: -8,
                 transition: { duration: 0.3 }
               }}
-              className="group relative bg-card rounded-2xl p-8 border border-border hover:border-transparent hover:shadow-2xl transition-all duration-500 overflow-hidden"
+              className="group relative bg-card rounded-xl p-6 border border-border hover:border-transparent hover:shadow-xl transition-all duration-500 overflow-hidden"
             >
               {/* Background Gradient Overlay */}
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
               
               {/* Icon Container */}
               <motion.div
-                className={`relative w-16 h-16 bg-gradient-to-br ${feature.color} ${feature.hoverColor} rounded-xl flex items-center justify-center mb-6 transition-all duration-500`}
+                className={`relative w-12 h-12 bg-gradient-to-br ${feature.color} ${feature.hoverColor} rounded-lg flex items-center justify-center mb-4 transition-all duration-500`}
                 whileHover={{ scale: 1.1, rotate: 5 }}
               >
-                <feature.icon className="w-8 h-8 text-white" />
+                <feature.icon className="w-6 h-6 text-white" />
               </motion.div>
 
               {/* Content */}
               <div className="relative z-10">
-                <h3 className="text-xl font-semibold mb-4 text-card-foreground group-hover:text-foreground transition-colors duration-300">
+                <h3 className="text-lg font-semibold mb-3 text-card-foreground group-hover:text-foreground transition-colors duration-300">
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-300">
+                <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-card-foreground/80 transition-colors duration-300">
                   {feature.description}
                 </p>
               </div>

@@ -52,11 +52,11 @@ const statVariants = {
 
 export function StatsSection() {
   return (
-    <section className="py-24 bg-gradient-to-br from-card to-card/50 border-y border-border">
-      <div className="container mx-auto px-6">
+    <section className="py-32 bg-gradient-to-br from-card to-card/50 border-y border-border">
+      <div className="container mx-auto px-8">
         {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-20"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -72,7 +72,7 @@ export function StatsSection() {
 
         {/* Stats Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -87,18 +87,18 @@ export function StatsSection() {
                 scale: 1.02,
                 transition: { duration: 0.3 }
               }}
-              className="group relative bg-background rounded-2xl p-8 border border-border hover:border-transparent hover:shadow-xl transition-all duration-500 text-center overflow-hidden"
+              className="group relative bg-background rounded-xl p-6 border border-border hover:border-transparent hover:shadow-lg transition-all duration-500 text-center overflow-hidden"
             >
               {/* Background Gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
               
               {/* Icon */}
               <motion.div
-                className={`relative inline-flex w-16 h-16 bg-gradient-to-br ${stat.color} rounded-xl items-center justify-center mb-6`}
+                className={`relative inline-flex w-12 h-12 bg-gradient-to-br ${stat.color} rounded-lg items-center justify-center mb-4`}
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ duration: 0.3 }}
               >
-                <stat.icon className="w-8 h-8 text-white" />
+                <stat.icon className="w-6 h-6 text-white" />
               </motion.div>
 
               {/* Value */}
@@ -109,24 +109,24 @@ export function StatsSection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <div className="text-4xl md:text-5xl font-bold text-foreground">
+                <div className="text-3xl md:text-4xl font-bold text-foreground">
                   {stat.value}
                 </div>
               </motion.div>
 
               {/* Label */}
-              <h3 className="text-lg font-semibold mb-2 text-card-foreground">
+              <h3 className="text-base font-semibold mb-2 text-card-foreground">
                 {stat.label}
               </h3>
 
               {/* Description */}
-              <p className="text-sm text-muted-foreground group-hover:text-card-foreground/80 transition-colors duration-300">
+              <p className="text-xs text-muted-foreground group-hover:text-card-foreground/80 transition-colors duration-300">
                 {stat.description}
               </p>
 
               {/* Pulse Effect */}
               <motion.div
-                className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 rounded-2xl`}
+                className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 rounded-xl`}
                 animate={{
                   opacity: [0, 0.1, 0],
                   scale: [1, 1.05, 1]
