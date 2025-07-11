@@ -165,10 +165,9 @@ export function Navbar() {
               </Link>
               <Link
                 href="/signup"
-                className="px-6 py-2 bg-gradient-to-r from-lemon-lime-600 via-security-green-600 to-trust-blue-700 text-white font-medium rounded-lg hover:from-lemon-lime-700 hover:via-security-green-700 hover:to-trust-blue-800 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl group relative overflow-hidden border border-lemon-lime-500/30"
+                className="px-6 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               >
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                Get Started
               </Link>
             </div>
 
@@ -261,7 +260,7 @@ export function Navbar() {
               </Link>
               <Link
                 href="/signup"
-                className="block p-3 bg-gradient-to-r from-lemon-lime-600 via-security-green-600 to-trust-blue-700 text-white font-medium rounded-lg text-center shadow-lg border border-lemon-lime-500/30"
+                className="block p-3 bg-accent text-accent-foreground font-medium rounded-lg text-center shadow-lg hover:bg-accent/90 transition-colors duration-200"
               >
                 Get Started
               </Link>
