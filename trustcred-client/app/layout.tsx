@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: "TrustCred - Secure Digital Credentials",
   description: "Building the future of digital credentials with security, trust, and innovation. Empowering organizations to issue and verify credentials with confidence.",
   icons: {
-    icon: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/Trustcred.jpg',
+    apple: '/Trustcred.jpg',
   },
 };
 
