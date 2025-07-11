@@ -4,7 +4,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
-import { TrustCredLogo } from "./trustcred-logo";
+import { TrustCredLogo } from "./test-logo";
 
 const navigation = [
   {
@@ -72,9 +72,10 @@ export function Navbar() {
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
               <TrustCredLogo 
-                size={20} 
+                size={45} 
+                variant="full"
                 showAnimation={true}
-                className="transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
+                className="transform transition-all duration-500 group-hover:scale-105"
               />
             </div>
           </Link>
