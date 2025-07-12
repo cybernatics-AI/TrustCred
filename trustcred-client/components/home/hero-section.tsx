@@ -38,8 +38,8 @@ export function HeroSection() {
               className="space-y-4"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-                The Future of
-                <span className="block bg-gradient-to-r from-lemon-lime-600 to-security-green-600 bg-clip-text text-transparent">
+                The Future of 
+                <span className="block bg-gradient-to-r from-lemon-lime-600 to-security-green-600 bg-clip-text ">
                   Digital Credentials
                 </span>
               </h1>
