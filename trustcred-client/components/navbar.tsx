@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { TrustCredLogo } from "./test-logo";
+import { ConnectWalletModal } from "./connect-wallet-modal";
 
 const navigation = [
   {
@@ -44,6 +45,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,7 +68,7 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 py-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
@@ -163,12 +165,12 @@ export function Navbar() {
               >
                 Sign In
               </Link>
-              <Link
-                href="/signup"
+              <button
+                onClick={() => setIsWalletModalOpen(true)}
                 className="px-6 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               >
                 Get Started
-              </Link>
+              </button>
             </div>
 
             {/* Mobile menu button */}
@@ -258,16 +260,22 @@ export function Navbar() {
               >
                 Sign In
               </Link>
-              <Link
-                href="/signup"
-                className="block p-3 bg-accent text-accent-foreground font-medium rounded-lg text-center shadow-lg hover:bg-accent/90 transition-colors duration-200"
+              <button
+                onClick={() => setIsWalletModalOpen(true)}
+                className="block w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg text-center shadow-lg hover:bg-accent/90 transition-colors duration-200"
               >
                 Get Started
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Connect Wallet Modal */}
+      <ConnectWalletModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+      />
     </nav>
   );
 }
