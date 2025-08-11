@@ -1,48 +1,15 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Wallet, Shield, Zap, CheckCircle, AlertCircle } from "lucide-react";
-import { useState, useCallback } from "react";
-import { request } from "sats-connect";
+import { X, Wallet, Shield, Zap, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import Image from "next/image";
+import { walletManager, WalletAddress, WalletInfo } from '../lib/wallet';
 
 interface ConnectWalletModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-interface WalletAddress {
-  address: string;
-  publicKey: string;
-  purpose: 'payment' | 'ordinals' | 'stacks';
-}
-
-interface ConnectionResult {
-  addresses: WalletAddress[];
-}
-
-const walletOptions = [
-  {
-    name: "Xverse",
-    description: "Bitcoin & Stacks wallet with native DeFi support",
-    icon: "🟠",
-    popular: true,
-    supported: true
-  },
-  {
-    name: "Leather",
-    description: "Open-source Stacks wallet",
-    icon: "🟤",
-    popular: false,
-    supported: false
-  },
-  {
-    name: "Asigna",
-    description: "Multi-signature Stacks wallet",
-    icon: "🔐",
-    popular: false,
-    supported: false
-  }
-];
 
 const benefits = [
   { icon: Shield, text: "Secure blockchain authentication" },
@@ -55,66 +22,104 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [connectedAddresses, setConnectedAddresses] = useState<WalletAddress[] | null>(null);
+  const [walletOptions, setWalletOptions] = useState<WalletInfo[]>([]);
+  const [network, setNetwork] = useState<'mainnet' | 'testnet'>('testnet');
 
-  const handleXverseConnect = useCallback(async () => {
-    setSelectedWallet("Xverse");
+  // Initialize wallet options with installation status
+  useEffect(() => {
+    const initializeWalletOptions = async () => {
+      const isInstalled = await walletManager.checkWalletInstallation();
+      const options: WalletInfo[] = [
+        {
+          name: "Hiro Wallet",
+          description: "Official Stacks wallet with full DeFi support",
+          icon: "/xverse.jpeg", // Using xverse icon as placeholder for Hiro
+          popular: true,
+          supported: true,
+          installUrl: "https://wallet.hiro.so/",
+          isInstalled
+        },
+        {
+          name: "Xverse",
+          description: "Bitcoin & Stacks wallet with native DeFi support",
+          icon: "/xverse.jpeg",
+          popular: true,
+          supported: true,
+          installUrl: "https://www.xverse.app/",
+          isInstalled
+        },
+        {
+          name: "Leather",
+          description: "Open-source Stacks wallet",
+          icon: "/leather.jpeg",
+          popular: false,
+          supported: true,
+          installUrl: "https://leather.io/",
+          isInstalled
+        },
+        {
+          name: "Asigna",
+          description: "Multi-signature Stacks wallet",
+          icon: "/Asigna.jpg",
+          popular: false,
+          supported: true,
+          installUrl: "https://asigna.io/",
+          isInstalled
+        }
+      ];
+      
+      setWalletOptions(options);
+    };
+
+    if (isOpen) {
+      initializeWalletOptions();
+    }
+  }, [isOpen]);
+
+  const handleWalletConnect = useCallback(async (walletName: string) => {
+    setSelectedWallet(walletName);
     setIsConnecting(true);
     setError(null);
 
     try {
-      const response = await request('wallet_connect', null, {
-        addresses: ['stacks', 'payment', 'ordinals'],
-        message: 'Connect to TrustCred for secure digital credentials',
-        network: 'Mainnet'
-      });
-
-      if (response.status === 'success') {
-        const result = response.result as ConnectionResult;
-        setConnectedAddresses(result.addresses);
-        
-        // Store connection info in localStorage for persistence
-        localStorage.setItem('trustcred_wallet_connected', 'true');
-        localStorage.setItem('trustcred_wallet_type', 'xverse');
-        
-        const stacksAddress = result.addresses.find(addr => addr.purpose === 'stacks');
-        if (stacksAddress) {
-          localStorage.setItem('trustcred_stacks_address', stacksAddress.address);
-          localStorage.setItem('trustcred_stacks_publickey', stacksAddress.publicKey);
-        }
-
-        // Close modal after short delay to show success
-        setTimeout(() => {
-          onClose();
-        }, 1500);
-      } else {
-        let errorMessage = 'Failed to connect wallet';
-        
-        if (response.error.code === 'USER_REJECTION') {
-          errorMessage = 'Connection was cancelled by user';
-        } else if (response.error.code === 'WALLET_NOT_INSTALLED') {
-          errorMessage = 'Xverse wallet is not installed. Please install it from the Chrome Web Store.';
-        } else {
-          errorMessage = response.error.message || 'Connection failed';
-        }
-        
-        setError(errorMessage);
+      // Check if wallet is installed
+      const wallet = walletOptions.find(w => w.name === walletName);
+      if (!wallet?.isInstalled) {
+        throw new Error(`${walletName} is not installed. Please install it first.`);
       }
+
+      // Use wallet manager to connect
+      const result = await walletManager.connectWallet(walletName, network);
+      
+      setConnectedAddresses(result.addresses);
+      
+      // Close modal after short delay to show success
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+
     } catch (err: any) {
       console.error('Wallet connection error:', err);
-      setError(err.message || 'An unexpected error occurred while connecting');
+      let errorMessage = 'An unexpected error occurred while connecting';
+      
+      if (err.message) {
+        if (err.message.includes('not installed')) {
+          errorMessage = err.message;
+        } else if (err.message.includes('cancelled')) {
+          errorMessage = 'Connection was cancelled by user';
+        } else if (err.message.includes('network')) {
+          errorMessage = 'Network connection failed. Please check your internet connection.';
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsConnecting(false);
       setSelectedWallet(null);
     }
-  }, [onClose]);
-
-  const handleWalletConnect = async (walletName: string) => {
-    if (walletName === "Xverse") {
-      await handleXverseConnect();
-    } else {
-      setError("This wallet is not supported yet. Please use Xverse wallet.");
-    }
-  };
+  }, [walletOptions, network, onClose]);
 
   const resetModal = useCallback(() => {
     setError(null);
@@ -127,6 +132,14 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
     resetModal();
     onClose();
   }, [resetModal, onClose]);
+
+  const toggleNetwork = useCallback(() => {
+    setNetwork(prev => prev === 'mainnet' ? 'testnet' : 'mainnet');
+  }, []);
+
+  const openWalletInstall = useCallback((installUrl: string) => {
+    window.open(installUrl, '_blank', 'noopener,noreferrer');
+  }, []);
 
   return (
     <AnimatePresence>
@@ -167,6 +180,21 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                   className="p-2 hover:bg-muted rounded-lg transition-colors duration-200"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
+              
+              {/* Network Toggle */}
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Network:</span>
+                <button
+                  onClick={toggleNetwork}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                    network === 'mainnet'
+                      ? 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
+                      : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  }`}
+                >
+                  {network === 'mainnet' ? 'Mainnet' : 'Testnet'}
                 </button>
               </div>
             </div>
@@ -228,22 +256,28 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                 <h3 className="text-sm font-semibold text-card-foreground mb-4">Select Wallet</h3>
                 <div className="space-y-3">
                   {walletOptions.map((wallet, index) => (
-                    <motion.button
+                    <motion.div
                       key={wallet.name}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      onClick={() => handleWalletConnect(wallet.name)}
-                      disabled={isConnecting || !wallet.supported}
-                      className={`w-full p-4 border rounded-xl transition-all duration-200 group ${
+                      className={`w-full p-4 border rounded-xl transition-all duration-200 ${
                         wallet.supported
-                          ? "border-border hover:border-lemon-lime-300 dark:hover:border-lemon-lime-700 hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                          : "border-muted bg-muted/30 cursor-not-allowed opacity-60"
+                          ? "border-border hover:border-lemon-lime-300 dark:hover:border-lemon-lime-700 hover:bg-muted/50"
+                          : "border-muted bg-muted/30 opacity-60"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <span className="text-2xl">{wallet.icon}</span>
+                          <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                            <Image
+                              src={wallet.icon}
+                              alt={`${wallet.name} wallet icon`}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
                           <div className="text-left">
                             <div className="flex items-center space-x-2">
                               <span className="font-medium text-card-foreground">{wallet.name}</span>
@@ -267,19 +301,35 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                           </div>
                         </div>
                         
-                        {isConnecting && selectedWallet === wallet.name ? (
-                          <div className="w-5 h-5 border-2 border-lemon-lime-500 border-t-transparent rounded-full animate-spin" />
-                        ) : wallet.supported ? (
-                          <svg className="w-5 h-5 text-muted-foreground group-hover:text-lemon-lime-600 dark:group-hover:text-lemon-lime-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        ) : (
-                          <div className="w-5 h-5 flex items-center justify-center">
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
-                          </div>
-                        )}
+                        <div className="flex items-center space-x-2">
+                          {isConnecting && selectedWallet === wallet.name ? (
+                            <div className="w-5 h-5 border-2 border-lemon-lime-500 border-t-transparent rounded-full animate-spin" />
+                          ) : wallet.supported ? (
+                            wallet.isInstalled ? (
+                              <button
+                                onClick={() => handleWalletConnect(wallet.name)}
+                                disabled={isConnecting}
+                                className="px-4 py-2 bg-lemon-lime-600 hover:bg-lemon-lime-700 text-white text-sm rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                Connect
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => openWalletInstall(wallet.installUrl)}
+                                className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2"
+                              >
+                                <span>Install</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </button>
+                            )
+                          ) : (
+                            <div className="w-5 h-5 flex items-center justify-center">
+                              <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </motion.button>
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -302,7 +352,7 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                 {!connectedAddresses && (
                   <>
                     <p className="text-xs text-muted-foreground mb-2">
-                      Don&apos;t have Xverse wallet? <a href="https://www.xverse.app/" target="_blank" rel="noopener noreferrer" className="text-lemon-lime-600 dark:text-lemon-lime-400 hover:underline">Download here</a>
+                      Don&apos;t have a Stacks wallet? <a href="https://docs.stacks.co/wallet-connect/overview" target="_blank" rel="noopener noreferrer" className="text-lemon-lime-600 dark:text-lemon-lime-400 hover:underline">Learn more here</a>
                     </p>
                     <p className="text-xs text-muted-foreground mb-2">
                       By connecting your wallet, you agree to our Terms of Service and Privacy Policy

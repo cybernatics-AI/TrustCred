@@ -1,13 +1,6 @@
 
-**/settings/Mainnet.toml
-**/settings/Testnet.toml
-.cache/**
-history.txt
+# This .gitignore is now managed at the root level
+# See ../.gitignore for comprehensive ignore rules
 
-logs
-*.log
-npm-debug.log*
-coverage
-*.info
-costs-reports.json
-node_modules
+# Local overrides (if needed)
+# Add any contract-specific ignores here
