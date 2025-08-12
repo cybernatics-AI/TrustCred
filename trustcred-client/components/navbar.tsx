@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { TrustCredLogo } from "./test-logo";
 import { ConnectWalletModal } from "./connect-wallet-modal";
+import { MobileSidebar } from "./mobile-sidebar";
 
 const navigation = [
   {
@@ -44,7 +45,7 @@ const navigation = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   useEffect(() => {
@@ -56,9 +57,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleDropdownToggle = (name: string) => {
-    setOpenDropdown(openDropdown === name ? null : name);
-  };
+
 
   return (
     <nav
@@ -68,22 +67,22 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6 py-6">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
               <TrustCredLogo 
-                size={45} 
+                size={40} 
                 variant="full"
                 showAnimation={true}
-                className="transform transition-all duration-500 group-hover:scale-105"
+                className="transform transition-all duration-500 group-hover:scale-105 sm:w-auto w-32"
               />
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             {navigation.map((item) => (
               <div key={item.name} className="relative group">
                 {item.dropdown ? (
@@ -111,7 +110,7 @@ export function Navbar() {
 
                     {/* Dropdown */}
                     <div
-                      className={`absolute top-full left-0 mt-2 w-64 bg-card/95 backdrop-blur-xl border border-border rounded-xl shadow-xl transition-all duration-300 transform ${
+                      className={`absolute top-full left-0 mt-2 w-64 xl:w-72 bg-card/95 backdrop-blur-xl border border-border rounded-xl shadow-xl transition-all duration-300 transform ${
                         openDropdown === item.name
                           ? "opacity-100 translate-y-0 visible scale-100"
                           : "opacity-0 translate-y-2 invisible scale-95"
@@ -158,7 +157,8 @@ export function Navbar() {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             
-            <div className="hidden md:flex items-center space-x-3">
+            {/* Desktop actions */}
+            <div className="hidden lg:flex items-center space-x-3">
               <Link
                 href="/login"
                 className="text-foreground hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 transition-all duration-300 px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-lemon-lime-50 hover:to-security-green-50 dark:hover:from-lemon-lime-950 dark:hover:to-security-green-950"
@@ -173,103 +173,41 @@ export function Navbar() {
               </button>
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-foreground hover:text-accent transition-colors duration-200"
-              aria-label="Toggle menu"
-            >
-              <svg
-                className={`w-6 h-6 transition-transform duration-300 ${
-                  isMobileMenuOpen ? "rotate-90" : ""
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <div
-          className={`md:hidden transition-all duration-300 overflow-hidden ${
-            isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="py-4 space-y-2">
-            {navigation.map((item) => (
-              <div key={item.name}>
-                {item.dropdown ? (
-                  <div>
-                    <button
-                      onClick={() => handleDropdownToggle(item.name)}
-                      className="flex items-center justify-between w-full p-3 text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors duration-200"
-                    >
-                      <span>{item.name}</span>
-                      <svg
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          openDropdown === item.name ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    <div
-                      className={`transition-all duration-200 overflow-hidden ${
-                        openDropdown === item.name ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
-                      }`}
-                    >
-                      <div className="pl-4 space-y-1">
-                        {item.dropdown.map((subItem) => (
-                          <Link
-                            key={subItem.name}
-                            href={subItem.href}
-                            className="block p-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className="block p-3 text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors duration-200"
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </div>
-            ))}
-            
-            <div className="pt-4 space-y-2">
-              <Link
-                href="/login"
-                className="block p-3 text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors duration-200"
-              >
-                Sign In
-              </Link>
+            {/* Tablet actions - simplified */}
+            <div className="hidden md:flex lg:hidden items-center space-x-3">
               <button
                 onClick={() => setIsWalletModalOpen(true)}
-                className="block w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg text-center shadow-lg hover:bg-accent/90 transition-colors duration-200"
+                className="px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300"
               >
                 Get Started
               </button>
             </div>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="md:hidden p-2 text-foreground hover:text-accent transition-colors duration-200"
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Sidebar */}
+      <MobileSidebar
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+        onWalletConnect={() => setIsWalletModalOpen(true)}
+      />
 
       {/* Connect Wallet Modal */}
       <ConnectWalletModal

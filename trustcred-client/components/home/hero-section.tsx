@@ -6,12 +6,12 @@ import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="relative pt-20 pb-20 bg-background">
+    <section className="relative pt-16 sm:pt-20 pb-16 sm:pb-20 bg-background">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 opacity-30" />
       
-      <div className="container mx-auto px-6 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Side - Content */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -37,14 +37,14 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-4"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                 The Future of 
                 <span className="block bg-gradient-to-r from-lemon-lime-600 to-security-green-600 bg-clip-text ">
                   Digital Credentials
                 </span>
               </h1>
               
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
                 Secure, verifiable, and tamper-proof digital credentials powered by blockchain technology. 
                 Transform how you issue, verify, and manage certificates.
               </p>
@@ -55,18 +55,18 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex flex-wrap gap-6"
+              className="flex flex-wrap gap-4 sm:gap-6"
             >
-              <div className="flex items-center text-muted-foreground">
-                <Shield className="w-5 h-5 mr-2 text-security-green-600 dark:text-security-green-400" />
+              <div className="flex items-center text-muted-foreground text-sm sm:text-base">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-security-green-600 dark:text-security-green-400" />
                 <span className="font-medium">Blockchain Secured</span>
               </div>
-              <div className="flex items-center text-muted-foreground">
-                <Zap className="w-5 h-5 mr-2 text-lemon-lime-600 dark:text-lemon-lime-400" />
+              <div className="flex items-center text-muted-foreground text-sm sm:text-base">
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-lemon-lime-600 dark:text-lemon-lime-400" />
                 <span className="font-medium">Instant Verification</span>
               </div>
-              <div className="flex items-center text-muted-foreground">
-                <Users className="w-5 h-5 mr-2 text-trust-blue-600 dark:text-trust-blue-400" />
+              <div className="flex items-center text-muted-foreground text-sm sm:text-base">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-trust-blue-600 dark:text-trust-blue-400" />
                 <span className="font-medium">Multi-Platform</span>
               </div>
             </motion.div>
@@ -76,7 +76,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
@@ -84,7 +84,7 @@ export function HeroSection() {
               >
                 <Link
                   href="/signup"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-accent text-accent-foreground font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-accent text-accent-foreground font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
                 >
                   Start Free Trial
                   <ArrowRight className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
@@ -97,7 +97,7 @@ export function HeroSection() {
               >
                 <Link
                   href="/demo"
-                  className="inline-flex items-center justify-center px-8 py-4 border border-border text-foreground font-semibold rounded-lg hover:bg-muted transition-all duration-300"
+                  className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-border text-foreground font-semibold rounded-lg hover:bg-muted transition-all duration-300 text-sm sm:text-base"
                 >
                   Watch Demo
                 </Link>
