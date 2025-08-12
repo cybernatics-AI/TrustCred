@@ -106,6 +106,70 @@ export class WalletManager {
     });
   }
 
+  // Method to trigger the Stacks modal without blocking
+  triggerWalletConnection(walletName: string): void {
+    const appConfig = {
+      appDetails: {
+        name: "TrustCred",
+        icon: "https://trustcred.io/logo.png",
+        url: "https://trustcred.io"
+      },
+      network: 'mainnet',
+      onFinish: (data: FinishedAuthData) => {
+        console.log('Wallet connection successful:', data);
+        
+        // Extract addresses from the connection result
+        const addresses: WalletAddress[] = [];
+        
+        // Extract Stacks address from userSession
+        if (data.userSession?.loadUserData) {
+          const userData = data.userSession.loadUserData();
+          if (userData?.profile?.stxAddress?.mainnet) {
+            addresses.push({
+              address: userData.profile.stxAddress.mainnet,
+              publicKey: '',
+              purpose: 'stacks'
+            });
+          }
+          if (userData?.profile?.btcAddress) {
+            addresses.push({
+              address: userData.profile.btcAddress,
+              publicKey: '',
+              purpose: 'payment'
+            });
+          }
+        }
+
+        const result: WalletConnectionResult = {
+          addresses,
+          userSession: data.userSession || null,
+          walletType: walletName.toLowerCase(),
+          network: 'mainnet'
+        };
+
+        // Store connection info
+        this.storeConnectionInfo(result);
+        
+        // Dispatch a custom event to notify the UI
+        window.dispatchEvent(new CustomEvent('walletConnected', { detail: result }));
+      },
+      onCancel: () => {
+        console.log('Wallet connection cancelled by user');
+        // Dispatch a custom event for cancellation
+        window.dispatchEvent(new CustomEvent('walletConnectionCancelled'));
+      }
+    };
+
+    try {
+      // Show the connect modal
+      showConnect(appConfig);
+    } catch (error) {
+      console.error('Error showing connect modal:', error);
+      // Dispatch cancellation event if there's an error
+      window.dispatchEvent(new CustomEvent('walletConnectionCancelled'));
+    }
+  }
+
   private storeConnectionInfo(result: WalletConnectionResult): void {
     localStorage.setItem('trustcred_wallet_connected', 'true');
     localStorage.setItem('trustcred_wallet_type', result.walletType);
