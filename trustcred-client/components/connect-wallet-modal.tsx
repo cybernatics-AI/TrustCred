@@ -23,22 +23,13 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
   const [error, setError] = useState<string | null>(null);
   const [connectedAddresses, setConnectedAddresses] = useState<WalletAddress[] | null>(null);
   const [walletOptions, setWalletOptions] = useState<WalletInfo[]>([]);
-  const [network, setNetwork] = useState<'mainnet' | 'testnet'>('testnet');
+
 
   // Initialize wallet options with installation status
   useEffect(() => {
     const initializeWalletOptions = async () => {
       const isInstalled = await walletManager.checkWalletInstallation();
       const options: WalletInfo[] = [
-        {
-          name: "Hiro Wallet",
-          description: "Official Stacks wallet with full DeFi support",
-          icon: "/xverse.jpeg", // Using xverse icon as placeholder for Hiro
-          popular: true,
-          supported: true,
-          installUrl: "https://wallet.hiro.so/",
-          isInstalled
-        },
         {
           name: "Xverse",
           description: "Bitcoin & Stacks wallet with native DeFi support",
@@ -89,7 +80,7 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
       }
 
       // Use wallet manager to connect
-      const result = await walletManager.connectWallet(walletName, network);
+      const result = await walletManager.connectWallet(walletName);
       
       setConnectedAddresses(result.addresses);
       
@@ -98,11 +89,11 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
         onClose();
       }, 1500);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Wallet connection error:', err);
       let errorMessage = 'An unexpected error occurred while connecting';
       
-      if (err.message) {
+      if (err instanceof Error && err.message) {
         if (err.message.includes('not installed')) {
           errorMessage = err.message;
         } else if (err.message.includes('cancelled')) {
@@ -119,7 +110,7 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
       setIsConnecting(false);
       setSelectedWallet(null);
     }
-  }, [walletOptions, network, onClose]);
+  }, [walletOptions, onClose]);
 
   const resetModal = useCallback(() => {
     setError(null);
@@ -133,9 +124,11 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
     onClose();
   }, [resetModal, onClose]);
 
-  const toggleNetwork = useCallback(() => {
-    setNetwork(prev => prev === 'mainnet' ? 'testnet' : 'mainnet');
-  }, []);
+  const disconnectWallet = useCallback(() => {
+    walletManager.disconnect();
+    setConnectedAddresses(null);
+    onClose();
+  }, [onClose]);
 
   const openWalletInstall = useCallback((installUrl: string) => {
     window.open(installUrl, '_blank', 'noopener,noreferrer');
@@ -182,21 +175,6 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
-              
-              {/* Network Toggle */}
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Network:</span>
-                <button
-                  onClick={toggleNetwork}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
-                    network === 'mainnet'
-                      ? 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
-                      : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                  }`}
-                >
-                  {network === 'mainnet' ? 'Mainnet' : 'Testnet'}
-                </button>
-              </div>
             </div>
 
             {/* Error Display */}
@@ -219,10 +197,22 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                   <CheckCircle className="w-5 h-5 text-security-green-500 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-security-green-800 dark:text-security-green-200">Successfully Connected!</p>
-                    <p className="text-sm text-security-green-600 dark:text-security-green-300 mt-1">
-                      Connected {connectedAddresses.length} address{connectedAddresses.length !== 1 ? 'es' : ''}
-                    </p>
+                    <div className="mt-2 space-y-1">
+                      {connectedAddresses.map((address, index) => (
+                        <div key={index} className="text-xs text-security-green-600 dark:text-security-green-300">
+                          <span className="font-medium">{address.purpose === 'stacks' ? 'Stacks' : 'Bitcoin'}:</span> {address.address}
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                </div>
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={disconnectWallet}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors duration-200"
+                  >
+                    Disconnect Wallet
+                  </button>
                 </div>
               </div>
             )}
@@ -309,7 +299,7 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                               <button
                                 onClick={() => handleWalletConnect(wallet.name)}
                                 disabled={isConnecting}
-                                className="px-4 py-2 bg-lemon-lime-600 hover:bg-lemon-lime-700 text-white text-sm rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-4 py-2 bg-lemon-lime-600 hover:bg-lemon-lime-700 text-gray-900 dark:text-white text-sm rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 Connect
                               </button>
@@ -361,17 +351,20 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
                       <Shield className="w-3 h-3" />
                       <span>Your wallet connection is secure and encrypted</span>
                     </div>
+                    <div className="flex items-center justify-center space-x-2 text-xs text-orange-600 dark:text-orange-400 mt-2">
+                      <span>🔗 Mainnet Only</span>
+                    </div>
                   </>
                 )}
                 
                 {connectedAddresses && (
                   <div className="space-y-2">
                     <p className="text-xs text-muted-foreground">
-                      Connection successful! You can now access TrustCred features.
+                      Connection successful! You can now access TrustCred features on mainnet.
                     </p>
                     <div className="flex items-center justify-center space-x-2 text-xs text-security-green-600 dark:text-security-green-400">
                       <CheckCircle className="w-3 h-3" />
-                      <span>Wallet securely connected</span>
+                      <span>Wallet securely connected to mainnet</span>
                     </div>
                   </div>
                 )}

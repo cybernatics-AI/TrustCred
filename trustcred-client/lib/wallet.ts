@@ -1,4 +1,4 @@
-import { showConnect, isStacksWalletInstalled, UserSession } from '@stacks/connect';
+import { showConnect, isStacksWalletInstalled, UserSession, FinishedAuthData } from '@stacks/connect';
 
 export interface WalletAddress {
   address: string;
@@ -44,8 +44,7 @@ export class WalletManager {
   }
 
   async connectWallet(
-    walletName: string,
-    network: 'mainnet' | 'testnet'
+    walletName: string
   ): Promise<WalletConnectionResult> {
     return new Promise((resolve, reject) => {
       try {
@@ -55,45 +54,37 @@ export class WalletManager {
             icon: "https://trustcred.io/logo.png",
             url: "https://trustcred.io"
           },
-          network: network,
-          onFinish: (data: any) => {
+          network: 'mainnet',
+          onFinish: (data: FinishedAuthData) => {
             console.log('Wallet connection successful:', data);
             
             // Extract addresses from the connection result
             const addresses: WalletAddress[] = [];
             
-            if (data.addresses) {
-              // Add Stacks address
-              if (data.addresses.mainnet) {
+            // Extract Stacks address from userSession
+            if (data.userSession?.loadUserData) {
+              const userData = data.userSession.loadUserData();
+              if (userData?.profile?.stxAddress?.mainnet) {
                 addresses.push({
-                  address: data.addresses.mainnet,
-                  publicKey: data.publicKeys?.mainnet || '',
+                  address: userData.profile.stxAddress.mainnet,
+                  publicKey: '',
                   purpose: 'stacks'
                 });
               }
-              if (data.addresses.testnet) {
+              if (userData?.profile?.btcAddress) {
                 addresses.push({
-                  address: data.addresses.testnet,
-                  publicKey: data.publicKeys?.testnet || '',
-                  purpose: 'stacks'
+                  address: userData.profile.btcAddress,
+                  publicKey: '',
+                  purpose: 'payment'
                 });
               }
-            }
-
-            // Add Bitcoin address if available
-            if (data.btcAddress) {
-              addresses.push({
-                address: data.btcAddress,
-                publicKey: data.btcPublicKey || '',
-                purpose: 'payment'
-              });
             }
 
             const result: WalletConnectionResult = {
               addresses,
               userSession: data.userSession || null,
               walletType: walletName.toLowerCase(),
-              network
+              network: 'mainnet'
             };
 
             // Store connection info
