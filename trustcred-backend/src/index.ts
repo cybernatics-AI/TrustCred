@@ -16,6 +16,7 @@ import { logger } from './middleware/logger';
 import authRoutes from './routes/auth';
 import credentialRoutes from './routes/credentials';
 import organizationRoutes from './routes/organizations';
+import verificationRoutes from './routes/verification';
 import healthRoutes from './routes/health';
 
 // Import database connection
@@ -67,7 +68,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Custom middleware
 app.use(logger);
-app.use(rateLimiter);
+app.use(rateLimiter());
 
 // Health check endpoint
 app.use('/health', healthRoutes);
@@ -76,6 +77,9 @@ app.use('/health', healthRoutes);
 app.use(`/api/${API_VERSION}/auth`, authRoutes);
 app.use(`/api/${API_VERSION}/credentials`, credentialRoutes);
 app.use(`/api/${API_VERSION}/organizations`, organizationRoutes);
+
+// Verification routes (public endpoints)
+app.use(`/api/${API_VERSION}`, verificationRoutes);
 
 // Root endpoint
 app.get('/', (_req, res) => {

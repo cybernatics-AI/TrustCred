@@ -21,7 +21,7 @@ const redisConfig = {
 let redisClient: RedisClientType | null = null;
 
 // Connect to Redis
-export const connectRedis = async (): Promise<void> => {
+export const connectRedis = async (): Promise<RedisClientType> => {
   try {
     redisClient = createClient(redisConfig);
     
@@ -48,6 +48,8 @@ export const connectRedis = async (): Promise<void> => {
     // Test connection
     await redisClient.ping();
     console.log('✅ Redis connected successfully');
+    
+    return redisClient;
     
   } catch (error) {
     console.error('❌ Redis connection failed:', error);

@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { testConnection } from '../config/database';
-import { getRedisClient } from '../config/redis';
+import { connectRedis } from '../config/redis';
+import { blockchainService } from '../services/blockchain.service';
+import { logInfo, logError } from '../utils/logger';
 
 const router = Router();
 
@@ -39,7 +41,7 @@ router.get('/detailed', async (req: Request, res: Response): Promise<void> => {
 
   try {
     // Check Redis connection (optional)
-    const redisClient = getRedisClient();
+    const redisClient = await connectRedis();
     await redisClient.ping();
     health.dependencies.redis = 'healthy';
   } catch (error) {
@@ -69,7 +71,7 @@ router.get('/ready', async (req: Request, res: Response): Promise<void> => {
 
     // Check Redis (optional)
     try {
-      const redisClient = getRedisClient();
+      const redisClient = await connectRedis();
       await redisClient.ping();
     } catch (redisError) {
       console.warn('⚠️ Redis unavailable for readiness check, continuing');

@@ -1,14 +1,35 @@
 import { Request, Response, NextFunction } from 'express';
+import { logRequest, logInfo } from '../utils/logger';
 
 export const logger = (req: Request, res: Response, next: NextFunction): void => {
   const start = Date.now();
   
-  // Log request
-  console.log(`📥 ${req.method} ${req.url} - ${new Date().toISOString()}`);
+  // Log incoming request
+  logInfo('Incoming request', {
+    method: req.method,
+    url: req.url,
+    userAgent: req.get('User-Agent'),
+    ip: req.ip,
+    timestamp: new Date().toISOString(),
+  });
   
-  // Log request body for non-GET requests
+  // Log request body for non-GET requests (but sanitize sensitive data)
   if (req.method !== 'GET' && req.body && Object.keys(req.body).length > 0) {
-    console.log('📦 Request Body:', JSON.stringify(req.body, null, 2));
+    const sanitizedBody = { ...req.body };
+    
+    // Remove sensitive fields from logs
+    const sensitiveFields = ['password', 'token', 'secret', 'key', 'signature'];
+    sensitiveFields.forEach(field => {
+      if (sanitizedBody[field]) {
+        sanitizedBody[field] = '[REDACTED]';
+      }
+    });
+    
+    logInfo('Request body', {
+      method: req.method,
+      url: req.url,
+      body: sanitizedBody,
+    });
   }
 
   // Override res.end to log response
@@ -17,12 +38,12 @@ export const logger = (req: Request, res: Response, next: NextFunction): void =>
     const duration = Date.now() - start;
     const status = res.statusCode;
     
-    // Color code based on status
-    let statusColor = '🟢'; // Green for 2xx
-    if (status >= 400 && status < 500) statusColor = '🟡'; // Yellow for 4xx
-    if (status >= 500) statusColor = '🔴'; // Red for 5xx
-    
-    console.log(`${statusColor} ${req.method} ${req.url} - ${status} (${duration}ms)`);
+    // Log response using our structured logger
+    logRequest(req.method, req.url, status, duration, {
+      userAgent: req.get('User-Agent'),
+      ip: req.ip,
+      contentLength: res.get('Content-Length'),
+    });
     
     // Call original end method
     return originalEnd.call(this, chunk, encoding);
