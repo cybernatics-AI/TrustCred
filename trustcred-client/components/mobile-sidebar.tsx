@@ -5,6 +5,8 @@ import { X, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { TrustCredLogo } from "./test-logo";
+import { ConnectedWallet } from "./connected-wallet";
+import { useWallet } from "../lib/wallet-context";
 
 interface MobileSidebarProps {
   isOpen: boolean;
@@ -48,6 +50,7 @@ const navigation = [
 
 export function MobileSidebar({ isOpen, onClose, onWalletConnect }: MobileSidebarProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { isConnected, isConnecting } = useWallet();
 
   const handleDropdownToggle = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
@@ -168,23 +171,33 @@ export function MobileSidebar({ isOpen, onClose, onWalletConnect }: MobileSideba
 
               {/* Actions */}
               <div className="px-4 space-y-3">
-                <Link
-                  href="/login"
-                  onClick={handleLinkClick}
-                  className="block w-full p-4 text-center text-foreground hover:bg-muted rounded-lg transition-colors duration-200 font-medium"
-                >
-                  Sign In
-                </Link>
-                
-                <button
-                  onClick={() => {
-                    onWalletConnect();
-                    onClose();
-                  }}
-                  className="block w-full p-4 bg-accent text-accent-foreground font-medium rounded-lg text-center shadow-lg hover:bg-accent/90 transition-colors duration-200"
-                >
-                  Get Started
-                </button>
+                {!isConnected && (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={handleLinkClick}
+                      className="block w-full p-4 text-center text-foreground hover:bg-muted rounded-lg transition-colors duration-200 font-medium"
+                    >
+                      Sign In
+                    </Link>
+                    
+                    <button
+                      onClick={() => {
+                        onWalletConnect();
+                        onClose();
+                      }}
+                      disabled={isConnecting}
+                      className="block w-full p-4 bg-accent text-accent-foreground font-medium rounded-lg text-center shadow-lg hover:bg-accent/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isConnecting ? 'Connecting...' : 'Get Started'}
+                    </button>
+                  </>
+                )}
+                {isConnected && (
+                  <div className="flex justify-center">
+                    <ConnectedWallet className="w-full" />
+                  </div>
+                )}
               </div>
 
               {/* Footer */}

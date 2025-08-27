@@ -6,7 +6,9 @@ import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { TrustCredLogo } from "./test-logo";
 import { ConnectWalletModal } from "./connect-wallet-modal";
+import { ConnectedWallet } from "./connected-wallet";
 import { MobileSidebar } from "./mobile-sidebar";
+import { useWallet } from "../lib/wallet-context";
 
 const navigation = [
   {
@@ -47,6 +49,7 @@ export function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const { isConnected, isConnecting } = useWallet();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -159,28 +162,42 @@ export function Navbar() {
             
             {/* Desktop actions */}
             <div className="hidden lg:flex items-center space-x-3">
-              <Link
-                href="/login"
-                className="text-foreground hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 transition-all duration-300 px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-lemon-lime-50 hover:to-security-green-50 dark:hover:from-lemon-lime-950 dark:hover:to-security-green-950"
-              >
-                Sign In
-              </Link>
-              <button
-                onClick={() => setIsWalletModalOpen(true)}
-                className="px-6 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
-              >
-                Get Started
-              </button>
+              {!isConnected && (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-foreground hover:text-lemon-lime-600 dark:hover:text-lemon-lime-400 transition-all duration-300 px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-lemon-lime-50 hover:to-security-green-50 dark:hover:from-lemon-lime-950 dark:hover:to-security-green-950"
+                  >
+                    Sign In
+                  </Link>
+                  <button
+                    onClick={() => setIsWalletModalOpen(true)}
+                    disabled={isConnecting}
+                    className="px-6 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0"
+                  >
+                    {isConnecting ? 'Connecting...' : 'Get Started'}
+                  </button>
+                </>
+              )}
+              {isConnected && (
+                <ConnectedWallet />
+              )}
             </div>
 
             {/* Tablet actions - simplified */}
             <div className="hidden md:flex lg:hidden items-center space-x-3">
-              <button
-                onClick={() => setIsWalletModalOpen(true)}
-                className="px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300"
-              >
-                Get Started
-              </button>
+              {!isConnected && (
+                <button
+                  onClick={() => setIsWalletModalOpen(true)}
+                  disabled={isConnecting}
+                  className="px-4 py-2 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isConnecting ? 'Connecting...' : 'Get Started'}
+                </button>
+              )}
+              {isConnected && (
+                <ConnectedWallet />
+              )}
             </div>
 
             {/* Mobile menu button */}

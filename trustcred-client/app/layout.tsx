@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
+import { WalletProvider } from "../lib/wallet-context";
 import { Navbar } from "../components/navbar";
 import { Footer } from "../components/footer";
 
@@ -45,13 +46,15 @@ export default function RootLayout({
           defaultTheme="system"
           storageKey="trustcred-ui-theme"
         >
-          <div className="relative flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1 px-4 sm:px-6 lg:px-8 mt-20 sm:mt-24 lg:mt-30">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <WalletProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1 px-4 sm:px-6 lg:px-8 mt-20 sm:mt-24 lg:mt-30">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </WalletProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { walletManager } from '../lib/wallet';
+import { useWallet } from '../lib/wallet-context';
 
 interface ConnectWalletModalProps {
   isOpen: boolean;
@@ -9,7 +9,8 @@ interface ConnectWalletModalProps {
 }
 
 export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps) {
-  const [isConnecting, setIsConnecting] = useState(false);
+  const { connectWallet, isConnecting, isConnected } = useWallet();
+  const [localConnecting, setLocalConnecting] = useState(false);
 
   // Add global error handler to suppress JsonRpcError
   useEffect(() => {
@@ -28,63 +29,36 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
     };
   }, []);
 
-  // Listen for wallet connection events
+  // Close modal when wallet connects
   useEffect(() => {
-    const handleWalletConnected = (event: CustomEvent) => {
-      const result = event.detail;
-      setIsConnecting(false);
-      
+    if (isConnected) {
+      setLocalConnecting(false);
       // Close the modal after successful connection
       setTimeout(() => {
         onClose();
       }, 1000);
-      
-      console.log('Wallet connected successfully:', result);
-    };
-
-    const handleWalletConnectionCancelled = () => {
-      console.log('Wallet connection cancelled');
-      setIsConnecting(false);
-      // Close the modal when user cancels
-      onClose();
-    };
-
-    window.addEventListener('walletConnected', handleWalletConnected as EventListener);
-    window.addEventListener('walletConnectionCancelled', handleWalletConnectionCancelled);
-
-    return () => {
-      window.removeEventListener('walletConnected', handleWalletConnected as EventListener);
-      window.removeEventListener('walletConnectionCancelled', handleWalletConnectionCancelled);
-    };
-  }, [onClose]);
+    }
+  }, [isConnected, onClose]);
 
   const handleConnectWallet = useCallback(async () => {
-    setIsConnecting(true);
+    setLocalConnecting(true);
 
     try {
-      // Check if any wallet is installed
-      const isInstalled = await walletManager.checkWalletInstallation();
-      if (!isInstalled) {
-        console.error('No Stacks wallet is installed');
-        setIsConnecting(false);
-        return;
-      }
-
-      // Trigger the Stacks.js built-in modal
-      walletManager.triggerWalletConnection('xverse'); // Default to Xverse, but user can choose in the modal
+      // Use the context's connect wallet method
+      connectWallet('stacks-wallet');
 
     } catch (err: unknown) {
       console.error('Wallet connection error:', err);
-      setIsConnecting(false);
+      setLocalConnecting(false);
     }
-  }, []);
+  }, [connectWallet]);
 
   // When modal opens, automatically trigger wallet connection
   useEffect(() => {
-    if (isOpen && !isConnecting) {
+    if (isOpen && !isConnecting && !localConnecting && !isConnected) {
       handleConnectWallet();
     }
-  }, [isOpen, isConnecting, handleConnectWallet]);
+  }, [isOpen, isConnecting, localConnecting, isConnected, handleConnectWallet]);
 
   // This component now just handles the connection logic
   // The actual modal UI is handled by Stacks.js
